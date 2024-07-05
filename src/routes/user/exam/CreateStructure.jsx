@@ -16,7 +16,7 @@ const CreateStructure = () => {
 
 
     const [formData, setFormData] = useState({
-        skill: '',
+        // skill: '',
         number_of_topic: '',
         level_of_topic: '',
         part_id: '',
@@ -35,31 +35,51 @@ const CreateStructure = () => {
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
-        setFormEntries([...formEntries, formData]);
-        setFormData({ skill: '', number_of_topic: '', level_of_topic: '', part_id: '' }); // Reset form
-    };
-    // const filteredData = formData.filter(item => {
-    //     return Object.keys(filter).every(key =>
-    //         filter[key] === '' || item[key].toString().toLowerCase().includes(filter[key].toLowerCase())
-    //     );
-    // });
-    // const handleInputChange = (index, event) => {
-    //     const newFormData = [...formData];
-    //     newFormData[index][event.target.name] = event.target.value;
-    //     setFormData(newFormData);
-    // };
 
-    // const handleSubmit = (event) => {
-    //     event.preventDefault();
-    //     // Gửi dữ liệu đến API bằng Axios
-    //     axios.post('http://localhost:8085/api/saveStructure', formData)
-    //         .then(response => {
-    //             console.log('Success:', response.data);
-    //         })
-    //         .catch(error => {
-    //             console.error('Error:', error);
-    //         });
-    // };
+        const allFieldsFilled = Object.values(formData).every(value => value.trim() !== '');
+
+        if (!allFieldsFilled) {
+            alert('Vui lòng điền đủ thông tin cấu trúc!!!');
+            return; // Dừng xử lý nếu có trường rỗng
+        }
+        const isPartIdExist = formEntries.some(entry => entry.part_id === formData.part_id);
+
+        if (isPartIdExist) {
+            alert('Part đã tồn tại, vui lòng chọn Part khác.');
+            return;
+        }
+        setFormEntries([...formEntries, formData]);
+        setFormData({ number_of_topic: '', level_of_topic: '', part_id: '' });
+    };
+    const handleDelete = (indexToDelete) => {
+        const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
+        if (isConfirmed) {
+            // Nếu người dùng xác nhận, tiếp tục xóa
+            const newFormEntries = formEntries.filter((_, index) => index !== indexToDelete);
+            setFormEntries(newFormEntries);
+        }
+    };
+    const handleSubmitStructure = async () => {
+        const { formEntries } = this.state;
+        try {
+            const response = await fetch('http://localhost:8085/api/saveStructure', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ formEntries }),
+            });
+
+            if (response.ok) {
+                const jsonResponse = await response.json();
+                console.log('Submit success:', jsonResponse);
+            } else {
+                console.error('Submit failed');
+            }
+        } catch (error) {
+            console.error('Error during submission:', error);
+        }
+    };
     const getDataByData = (part_id) => {
         switch (part_id) {
             case '1': return "Part 1: Listening";
@@ -72,22 +92,28 @@ const CreateStructure = () => {
             default: return "Unknown Part";
         };
     };
+    useEffect(() => {
+        const handleBeforeUnload = e => {
+            if (formEntries.length > 0) {
+                e.preventDefault();
+                e.returnValue = "Bạn có chắc chắn muốn rời đi? Thông tin bạn đã nhập có thể không được lưu.";
+            }
+        };
 
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [formEntries]);
     return (
 
         <div>
             <HeaderUser />
             <nav className="min-h-[500px]">
-                
+
                 <div className="w-2/3 mx-auto ">
                     <h1 className="mt-5 mb-5 font-bold text-center text-3xl " >Filter Form</h1>
                     <form onSubmit={handleSubmitForm}>
-                        <input
-                            name="skill"
-                            value={formData.skill}
-                            onChange={handleInputChange}
-                            placeholder="Skill"
-                        />
+
                         <input
                             name="number_of_topic"
                             type="number"
@@ -95,20 +121,31 @@ const CreateStructure = () => {
                             onChange={handleInputChange}
                             placeholder="Number of Topic"
                         />
-                        <input
+                        <select
                             name="level_of_topic"
                             value={formData.level_of_topic}
                             onChange={handleInputChange}
-                            placeholder="Level of Topic"
-                        />
-                        <input
+                        >
+                            <option value="">Chọn độ khó</option>
+                            <option value="easy">easy</option>
+                            <option value="average">average</option>
+                            <option value="hard">hard</option>
+                        </select>
+
+                        <select
                             name="part_id"
-                            type="number"
                             value={formData.part_id}
                             onChange={handleInputChange}
-                            placeholder="Part ID"
-                        />
-                        {/* Các phần khác của form và component giữ nguyên */}
+                        >
+                            <option value="">Chọn Part</option>
+                            <option value="1">Part 1: Listening</option>
+                            <option value="2">Part 2: Listening</option>
+                            <option value="3">Part 3: Listening</option>
+                            <option value="4">Part 4: Listening</option>
+                            <option value="5">Part 5: Reading</option>
+                            <option value="6">Part 6: Reading</option>
+                            <option value="7">Part 7: Reading</option>
+                        </select>
                         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto">
                             Add Structure
                         </button>
@@ -117,9 +154,7 @@ const CreateStructure = () => {
                     <table className="min-w-full leading-normal mt-10">
                         <thead>
                             <tr>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                    Skill
-                                </th>
+
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                     Number of Topic
                                 </th>
@@ -129,20 +164,15 @@ const CreateStructure = () => {
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                     Part
                                 </th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Action
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
                             {formEntries.map((item, index) => (
                                 <tr key={index} className="border-b border-gray-200">
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <div className="flex items-center">
-                                            <div className="ml-3">
-                                                <p className="text-gray-900 whitespace-no-wrap">
-                                                    {item.skill}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </td>
+
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <p className="text-gray-900 whitespace-no-wrap">
                                             {item.number_of_topic}
@@ -158,12 +188,21 @@ const CreateStructure = () => {
                                             {getDataByData(item.part_id)}
                                         </p>
                                     </td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <button onClick={() => handleDelete(index)} className="text-red-500 hover:text-red-700">
+                                            Xóa
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto">
-                        Create Structure
+                    <button
+                        type="submit"
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto"
+                        onSubmit={handleSubmitStructure}
+                    >
+                        Begin The Test
                     </button>
                 </div>
             </nav>

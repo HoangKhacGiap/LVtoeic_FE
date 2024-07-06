@@ -59,26 +59,31 @@ const CreateStructure = () => {
             setFormEntries(newFormEntries);
         }
     };
-    const handleSubmitStructure = async () => {
-        const { formEntries } = this.state;
+    const submitFormEntries = async () => {
+        const isConfirmed = window.confirm("Bạn chắc chắn muốn làm cấu trúc này chứ?");
+        if (isConfirmed) {
+            const url = 'http://localhost:8085/api/saveStructure';
         try {
-            const response = await fetch('http://localhost:8085/api/saveStructure', {
-                method: 'POST',
+            const response = await fetch(url, {
+                method: 'POST', // Phương thức HTTP
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', // Kiểu nội dung của request
                 },
-                body: JSON.stringify({ formEntries }),
+                body: JSON.stringify(formEntries), // Chuyển đổi dữ liệu thành chuỗi JSON
             });
 
-            if (response.ok) {
-                const jsonResponse = await response.json();
-                console.log('Submit success:', jsonResponse);
-            } else {
-                console.error('Submit failed');
+            if (!response.ok) {
+                throw new Error('Something went wrong');
             }
+
+            const responseData = await response.json(); // Đọc phản hồi JSON từ server
+            console.log('Success:', responseData);
+            // Xử lý dữ liệu phản hồi ở đây
         } catch (error) {
-            console.error('Error during submission:', error);
+            console.error('Error:', error);
         }
+        }
+        
     };
     const getDataByData = (part_id) => {
         switch (part_id) {
@@ -200,7 +205,7 @@ const CreateStructure = () => {
                     <button
                         type="submit"
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto"
-                        onSubmit={handleSubmitStructure}
+                        onClick={submitFormEntries}
                     >
                         Begin The Test
                     </button>

@@ -29,6 +29,7 @@ import CreateTopic from "./routes/admin/Topic/createTopic";
 import Contact from "./routes/user/contact/contact.jsx";
 import ExamPage from "./routes/user/exam/examPage.jsx";
 import CreateOwnStructure from "./routes/user/exam/CreateStructure.jsx";
+import Profile from "./routes/user/contact/profile.jsx";
 
 import FirstPage from "./routes/user/firstPage";
 
@@ -64,13 +65,13 @@ const App = () => {
 
 
       <Route
-          path="/helloword"
-          element={
-            // <MainLayoutUser>
-            <Helloword></Helloword>
-            // </MainLayoutUser>
-          }
-        ></Route>
+        path="/helloword"
+        element={
+          // <MainLayoutUser>
+          <Helloword></Helloword>
+          // </MainLayoutUser>
+        }
+      ></Route>
 
 
       <Route
@@ -193,7 +194,12 @@ const App = () => {
         element={<TestExam></TestExam>}
       ></Route>
 
-      
+      <Route
+        path="/profile"
+        element={<Profile></Profile>}
+      ></Route>
+
+
       <Route
         path="/Role_Student_QuestionDetailResult"
         element={<QuestionResult>Lecture</QuestionResult>}

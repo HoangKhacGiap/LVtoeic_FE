@@ -36,7 +36,13 @@ const Header = () => {
                         </Link>
 
                     </li>
-                    <li>Profile</li>
+                    <li>
+                    <Link
+                            to={"/profile"}
+                        >
+                            Profile
+                        </Link>
+                    </li>
                     <li>
                         {token !== null ? (
                             <Link

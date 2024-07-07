@@ -12,7 +12,7 @@ const CreateStructure = () => {
     const [filter, setFilter] = useState({ skill: '', number_of_topic: '', level_of_topic: '', part_id: '' });
     const [exams, setTest] = useState([]);
     const { id } = useParams();
-
+    let navigate = useNavigate();
 
 
     const [formData, setFormData] = useState({
@@ -54,7 +54,6 @@ const CreateStructure = () => {
     const handleDelete = (indexToDelete) => {
         const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
         if (isConfirmed) {
-            // Nếu người dùng xác nhận, tiếp tục xóa
             const newFormEntries = formEntries.filter((_, index) => index !== indexToDelete);
             setFormEntries(newFormEntries);
         }
@@ -65,20 +64,20 @@ const CreateStructure = () => {
             const url = 'http://localhost:8085/api/saveStructure';
         try {
             const response = await fetch(url, {
-                method: 'POST', // Phương thức HTTP
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // Kiểu nội dung của request
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formEntries), // Chuyển đổi dữ liệu thành chuỗi JSON
+                body: JSON.stringify(formEntries),
             });
 
             if (!response.ok) {
-                throw new Error('Something went wrong');
+                throw new Error('Có lỗi đã xảy ra');
             }
 
-            const responseData = await response.json(); // Đọc phản hồi JSON từ server
+            const responseData = await response.json();
             console.log('Success:', responseData);
-            // Xử lý dữ liệu phản hồi ở đây
+            navigate(`/testExam/${responseData}`);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -87,11 +86,11 @@ const CreateStructure = () => {
     };
     const getDataByData = (part_id) => {
         switch (part_id) {
-            case '1': return "Part 1: Listening";
-            case '2': return "Part 2: Listening";
-            case '3': return "Part 3: Listening";
-            case '4': return "Part 4: Listening";
-            case '5': return "Part 5: Reading";
+            case '2': return "Part 1: Listening";
+            case '3': return "Part 2: Listening";
+            case '4': return "Part 3: Listening";
+            case '5': return "Part 4: Listening";
+            case '1': return "Part 5: Reading";
             case '6': return "Part 6: Reading";
             case '7': return "Part 7: Reading";
             default: return "Unknown Part";
@@ -143,11 +142,11 @@ const CreateStructure = () => {
                             onChange={handleInputChange}
                         >
                             <option value="">Chọn Part</option>
-                            <option value="1">Part 1: Listening</option>
-                            <option value="2">Part 2: Listening</option>
-                            <option value="3">Part 3: Listening</option>
-                            <option value="4">Part 4: Listening</option>
-                            <option value="5">Part 5: Reading</option>
+                            <option value="2">Part 1: Listening</option>
+                            <option value="3">Part 2: Listening</option>
+                            <option value="4">Part 3: Listening</option>
+                            <option value="5">Part 4: Listening</option>
+                            <option value="1">Part 5: Reading</option>
                             <option value="6">Part 6: Reading</option>
                             <option value="7">Part 7: Reading</option>
                         </select>

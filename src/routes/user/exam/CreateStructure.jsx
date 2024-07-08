@@ -14,6 +14,20 @@ const CreateStructure = () => {
     const { id } = useParams();
     let navigate = useNavigate();
 
+    //form sửa
+    const [showEditDialog, setShowEditDialog] = useState(false);
+    const handleEdit = () => {
+        setShowEditDialog(true);
+    };
+
+    const handleDialogClose = () => {
+        setShowEditDialog(false);
+    };
+    const handleDialogSubmit = (e) => {
+        e.preventDefault();
+        // Xử lý cập nhật thông tin ở đây
+        setShowEditDialog(false);
+    };
 
     const [formData, setFormData] = useState({
         // skill: '',
@@ -23,6 +37,7 @@ const CreateStructure = () => {
     });
 
     const [formEntries, setFormEntries] = useState([]);
+    const [editFormData, setEditFormData] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -40,7 +55,7 @@ const CreateStructure = () => {
 
         if (!allFieldsFilled) {
             alert('Vui lòng điền đủ thông tin cấu trúc!!!');
-            return; // Dừng xử lý nếu có trường rỗng
+            return;
         }
         const isPartIdExist = formEntries.some(entry => entry.part_id === formData.part_id);
 
@@ -51,6 +66,9 @@ const CreateStructure = () => {
         setFormEntries([...formEntries, formData]);
         setFormData({ number_of_topic: '', level_of_topic: '', part_id: '' });
     };
+
+
+    //DELETE
     const handleDelete = (indexToDelete) => {
         const isConfirmed = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
         if (isConfirmed) {
@@ -58,31 +76,58 @@ const CreateStructure = () => {
             setFormEntries(newFormEntries);
         }
     };
+
+
+    //EDIT
+    const handleEditClick = (index) => {
+        const formEntry = formEntries[index];
+        setEditFormData({ ...formEntry });
+    };
+
+    const handleInputEditChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData({ ...editFormData, [name]: value });
+    };
+
+    const handleEditFormSubmit = (e) => {
+        e.preventDefault();
+        const updatedFormEntries = formEntries.map(entry =>
+            entry.id === editFormData.id ? editFormData : entry
+        );
+        setFormEntries(updatedFormEntries);
+        setEditFormData(null);
+    };
+    const handlEditclose = () => {
+        setEditFormData(null);
+    };
+
+
+
     const submitFormEntries = async () => {
         const isConfirmed = window.confirm("Bạn chắc chắn muốn làm cấu trúc này chứ?");
         if (isConfirmed) {
             const url = 'http://localhost:8085/api/saveStructure';
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formEntries),
-            });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formEntries),
+                });
 
-            if (!response.ok) {
-                throw new Error('Có lỗi đã xảy ra');
+                if (!response.ok) {
+                    throw new Error('Có lỗi đã xảy ra');
+                }
+
+                const responseData = await response.json();
+                console.log('Success:', responseData);
+                navigate(`/testExam/${responseData}`);
+            } catch (error) {
+                console.error('Error:', error);
             }
+        }
 
-            const responseData = await response.json();
-            console.log('Success:', responseData);
-            navigate(`/testExam/${responseData}`);
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        }
-        
     };
     const getDataByData = (part_id) => {
         switch (part_id) {
@@ -153,6 +198,7 @@ const CreateStructure = () => {
                         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto">
                             Add Structure
                         </button>
+
                     </form>
 
                     <table className="min-w-full leading-normal mt-10">
@@ -193,11 +239,68 @@ const CreateStructure = () => {
                                         </p>
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <button onClick={() => handleDelete(index)} className="text-red-500 hover:text-red-700">
+                                        <button onClick={() => handleDelete(index)} 
+                                          className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 "
+                                          >
                                             Xóa
                                         </button>
+                                        <button onClick={() => handleEditClick(index)}
+                                              className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition ">
+
+                                            Edit
+                                        </button>
+
                                     </td>
+                                    {editFormData && (
+                                        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+                                            <div className="bg-white p-4 rounded">
+                                                <h2>Edit Structure</h2>
+                                                {/* Form sửa thông tin, có thể tái sử dụng các input và select như trên */}
+                                                <form onSubmit={handleEditFormSubmit}>
+                                                    <input
+                                                        name="number_of_topic"
+                                                        type="number"
+                                                        value={editFormData.number_of_topic}
+                                                        onChange={handleInputEditChange}
+                                                        placeholder="Number of Topic"
+                                                    />
+                                                    <select
+                                                        name="level_of_topic"
+                                                        value={editFormData.level_of_topic}
+                                                        onChange={handleInputEditChange}
+                                                    >
+                                                        <option value="">Chọn độ khó</option>
+                                                        <option value="easy">easy</option>
+                                                        <option value="average">average</option>
+                                                        <option value="hard">hard</option>
+                                                    </select>
+
+                                                    <select
+                                                        name="part_id"
+                                                        value={editFormData.part_id}
+                                                        onChange={handleInputEditChange}
+                                                    >
+                                                        <option value="">Chọn Part</option>
+                                                        <option value="2">Part 1: Listening</option>
+                                                        <option value="3">Part 2: Listening</option>
+                                                        <option value="4">Part 3: Listening</option>
+                                                        <option value="5">Part 4: Listening</option>
+                                                        <option value="1">Part 5: Reading</option>
+                                                        <option value="6">Part 6: Reading</option>
+                                                        <option value="7">Part 7: Reading</option>
+                                                    </select>
+                                                    <button type="submit" className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                                        Save Changes
+                                                    </button>
+                                                    <button type="button" onClick={handlEditclose} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-4">
+                                                        Cancel
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    )}
                                 </tr>
+
                             ))}
                         </tbody>
                     </table>

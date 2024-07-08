@@ -12,7 +12,6 @@ const TestExam = () => {
     const [userAnswers, setUserAnswers] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isRunning, setIsRunning] = useState(true);
-    // const history = useHistory();
 
     const [exams, setTest] = useState([]);
     const { id } = useParams();
@@ -60,10 +59,9 @@ const TestExam = () => {
                 setSeconds(prevSeconds => prevSeconds + 1);
             }, 1000);
 
-            // Cleanup interval on component unmount or when isRunning changes
             return () => clearInterval(interval);
         }
-    }, [isRunning]); // Mảng rỗng đảm bảo rằng effect chỉ chạy một lần khi component được mount
+    }, [isRunning]);
     const formatTime = (seconds) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -151,7 +149,9 @@ const TestExam = () => {
 
                                         {topic.questions?.map((question) => (
                                             <div key={question.id} id={question.id} className="pl-4 mb-2">
+                                                {isSubmitted && !userAnswers[question.id] && <p className="text-red-500">Bạn chưa làm câu hỏi này</p>}
                                                 <h3 className="font-semibold">{`${++questionNumber}. ${question.name}`}</h3>
+
                                                 {question.answers?.map((answer) => (
                                                     <div
                                                         key={answer.id}

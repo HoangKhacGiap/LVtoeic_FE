@@ -9,28 +9,22 @@ import FooterUser from "../FooterUser";
 
 
 const CreateStructure = () => {
-    const [filter, setFilter] = useState({ skill: '', number_of_topic: '', level_of_topic: '', part_id: '' });
-    const [exams, setTest] = useState([]);
-    const { id } = useParams();
     let navigate = useNavigate();
 
-    //form sửa
-    const [showEditDialog, setShowEditDialog] = useState(false);
-    const handleEdit = () => {
-        setShowEditDialog(true);
-    };
-
-    const handleDialogClose = () => {
-        setShowEditDialog(false);
-    };
-    const handleDialogSubmit = (e) => {
-        e.preventDefault();
-        // Xử lý cập nhật thông tin ở đây
-        setShowEditDialog(false);
+    const getDataByData = (part_id) => {
+        switch (part_id) {
+            case '2': return "Part 1: Listening";
+            case '3': return "Part 2: Listening";
+            case '4': return "Part 3: Listening";
+            case '5': return "Part 4: Listening";
+            case '1': return "Part 5: Reading";
+            case '6': return "Part 6: Reading";
+            case '7': return "Part 7: Reading";
+            default: return "Unknown Part";
+        };
     };
 
     const [formData, setFormData] = useState({
-        // skill: '',
         number_of_topic: '',
         level_of_topic: '',
         part_id: '',
@@ -38,6 +32,7 @@ const CreateStructure = () => {
 
     const [formEntries, setFormEntries] = useState([]);
     const [editFormData, setEditFormData] = useState(null);
+    const [number, setNumber] = useState([]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -81,7 +76,8 @@ const CreateStructure = () => {
     //EDIT
     const handleEditClick = (index) => {
         const formEntry = formEntries[index];
-        setEditFormData({ ...formEntry });
+        setNumber(index);
+        setEditFormData(formEntry);
     };
 
     const handleInputEditChange = (e) => {
@@ -91,10 +87,29 @@ const CreateStructure = () => {
 
     const handleEditFormSubmit = (e) => {
         e.preventDefault();
-        const updatedFormEntries = formEntries.map(entry =>
-            entry.id === editFormData.id ? editFormData : entry
+
+        // Kiểm tra xem có bất kỳ entry nào trong formEntries trùng với editFormData không
+        // const isDuplicate = formEntries.some((entry, idx) =>
+        //     idx !== number && Object.keys(editFormData).some(key =>
+        //         entry[key] === editFormData[key]
+        //     )
+        // );
+
+        // if (isDuplicate) {
+        //     alert(`${getDataByData(editFormData.part_id)} đã tồn tại.`);
+        //     return;
+        // }
+
+        setFormEntries(currentEntries =>
+            currentEntries.map((entry, idx) =>
+                idx === number ? { ...entry, ...editFormData } : entry
+            )
         );
-        setFormEntries(updatedFormEntries);
+
+        console.log(number);
+        console.log(formEntries);
+        console.log(editFormData);
+
         setEditFormData(null);
     };
     const handlEditclose = () => {
@@ -104,6 +119,12 @@ const CreateStructure = () => {
 
 
     const submitFormEntries = async () => {
+        if (!formEntries || formEntries.length === 0) {
+            alert("Bạn chưa thêm cấu trúc nào.");
+            return;
+        }
+
+
         const isConfirmed = window.confirm("Bạn chắc chắn muốn làm cấu trúc này chứ?");
         if (isConfirmed) {
             const url = 'http://localhost:8085/api/saveStructure';
@@ -129,18 +150,7 @@ const CreateStructure = () => {
         }
 
     };
-    const getDataByData = (part_id) => {
-        switch (part_id) {
-            case '2': return "Part 1: Listening";
-            case '3': return "Part 2: Listening";
-            case '4': return "Part 3: Listening";
-            case '5': return "Part 4: Listening";
-            case '1': return "Part 5: Reading";
-            case '6': return "Part 6: Reading";
-            case '7': return "Part 7: Reading";
-            default: return "Unknown Part";
-        };
-    };
+    
     useEffect(() => {
         const handleBeforeUnload = e => {
             if (formEntries.length > 0) {
@@ -239,13 +249,13 @@ const CreateStructure = () => {
                                         </p>
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                        <button onClick={() => handleDelete(index)} 
-                                          className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 "
-                                          >
+                                        <button onClick={() => handleDelete(index)}
+                                            className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 "
+                                        >
                                             Xóa
                                         </button>
                                         <button onClick={() => handleEditClick(index)}
-                                              className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition ">
+                                            className="ml-2 px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-700 transition ">
 
                                             Edit
                                         </button>

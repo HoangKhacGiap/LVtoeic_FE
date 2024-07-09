@@ -89,16 +89,14 @@ const CreateStructure = () => {
         e.preventDefault();
 
         // Kiểm tra xem có bất kỳ entry nào trong formEntries trùng với editFormData không
-        // const isDuplicate = formEntries.some((entry, idx) =>
-        //     idx !== number && Object.keys(editFormData).some(key =>
-        //         entry[key] === editFormData[key]
-        //     )
-        // );
+        const isDuplicate = formEntries.some((entry, idx) =>
+            idx !== number && entry.part_id === editFormData.part_id
+        );
 
-        // if (isDuplicate) {
-        //     alert(`${getDataByData(editFormData.part_id)} đã tồn tại.`);
-        //     return;
-        // }
+        if (isDuplicate) {
+            alert(`${getDataByData(editFormData.part_id)} đã tồn tại.`);
+            return;
+        }
 
         setFormEntries(currentEntries =>
             currentEntries.map((entry, idx) =>
@@ -143,6 +141,7 @@ const CreateStructure = () => {
 
                 const responseData = await response.json();
                 console.log('Success:', responseData);
+                setFormEntries([]);
                 navigate(`/testExam/${responseData}`);
             } catch (error) {
                 console.error('Error:', error);

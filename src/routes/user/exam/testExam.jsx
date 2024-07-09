@@ -12,6 +12,7 @@ const TestExam = () => {
     const [userAnswers, setUserAnswers] = useState({});
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isRunning, setIsRunning] = useState(true);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
     const [exams, setTest] = useState([]);
     const { id } = useParams();
@@ -89,6 +90,7 @@ const TestExam = () => {
         if (isConfirmed) {
             setIsSubmitted(true);
             setIsRunning(false);
+            setIsButtonDisabled(true);
             console.log('Bài thi đã được lưu');
         } else {
             console.log('Bài thi đã bị hủy.');
@@ -190,7 +192,10 @@ const TestExam = () => {
                         </div>
                     ))}
                 </div>
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded">Chấm điểm</button>
+                <button type="submit" 
+                        disabled={isButtonDisabled}
+                        className="p-2 bg-blue-500 text-white rounded cursor-pointer">Chấm điểm
+                </button>
             </form>
             <FooterUser />
         </div>

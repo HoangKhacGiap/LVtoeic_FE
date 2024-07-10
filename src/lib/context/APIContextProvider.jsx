@@ -56,9 +56,15 @@ const APIContextProvider = ({ children }) => {
         type: "authenticateUserSuccess",
         payload: { role: data.roles[0].authority },
       });
-      navigate("/helloword");
+      // navigate("/helloword");
 
-      // navigate("/" + data.roles[0].authority);
+      if (data.roles[0].authority === "Role_Admin") {
+        navigate("/admin"); 
+      } else if (data.roles[0].authority === "Role_Student") {
+        navigate("/helloword");
+      } else {
+        navigate("/helloword");
+      }
     } catch (err) {
       dispatchAPI({
         type: "authenticateUserFailure",

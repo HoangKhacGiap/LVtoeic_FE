@@ -89,8 +89,16 @@ const TestExam = () => {
 
         if (isConfirmed) {
             setIsSubmitted(true);
+
+            let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
+
+            console.log(`Số câu trả lời đúng: ${correctAnswersCount}`);
+
             setIsRunning(false);
             setIsButtonDisabled(true);
+            console.log(isSubmitted);
+
+            console.log(userAnswers);
             console.log('Bài thi đã được lưu');
         } else {
             console.log('Bài thi đã bị hủy.');
@@ -160,8 +168,10 @@ const TestExam = () => {
                                                         // className={`flex items-center mb-2 ${userAnswers[question.id]?.answerId === answer.id ? (answer.correctAnswer ? 'bg-green-500' : 'bg-red-500') : ''}`}
                                                         className={`flex items-center mb-2 ${isSubmitted && userAnswers[question.id]?.answerId === answer.id ? (answer.correctAnswer ? 'bg-green-500' : 'bg-red-500') : ''}`}
                                                         onClick={() => {
-                                                            handleQuestionClick(question.id);
-                                                            handleAnswerChange(question.id, answer.id, !!answer.correctAnswer)
+                                                            if (!isSubmitted) { // Chỉ xử lý click nếu bài chưa được nộp
+                                                                handleQuestionClick(question.id);
+                                                                handleAnswerChange(question.id, answer.id, !!answer.correctAnswer);
+                                                            }
                                                         }}>
                                                         <input
                                                             type="radio"
@@ -169,6 +179,7 @@ const TestExam = () => {
                                                             name={`question-${question.id}`}
                                                             value={answer.content}
                                                             className="mr-2"
+                                                            disabled={isButtonDisabled}
                                                         />
                                                         <label htmlFor={`${answer.id}+${questionNumber}`} className="text-md">
                                                             <div className="flex items-center">
@@ -192,9 +203,9 @@ const TestExam = () => {
                         </div>
                     ))}
                 </div>
-                <button type="submit" 
-                        disabled={isButtonDisabled}
-                        className="p-2 bg-blue-500 text-white rounded cursor-pointer">Chấm điểm
+                <button type="submit"
+                    disabled={isButtonDisabled}
+                    className="p-2 bg-blue-500 text-white rounded cursor-pointer">Chấm điểm
                 </button>
             </form>
             <FooterUser />

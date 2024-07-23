@@ -169,7 +169,7 @@ const CreateStructure = () => {
             <nav className="min-h-[500px]">
 
                 <div className="w-2/3 mx-auto ">
-                    <h1 className="mt-5 mb-5 font-bold text-center text-3xl " >Filter Form</h1>
+                    <h1 className="mt-5 mb-5 font-bold text-center text-3xl " >Structure Form</h1>
                     <form onSubmit={handleSubmitForm}>
 
                         <input

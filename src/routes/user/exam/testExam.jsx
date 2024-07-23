@@ -6,18 +6,27 @@ import axios from "axios";
 
 import HeaderUser from "../HeaderUser";
 import FooterUser from "../FooterUser";
+import { set } from "date-fns";
 
 const TestExam = () => {
     const [seconds, setSeconds] = useState(0);
+
     const [userAnswers, setUserAnswers] = useState({});
+    const [questions, setQuestions] = useState({});
+
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isRunning, setIsRunning] = useState(true);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [userQuestions, setUserQuestions] = useState(0);
 
     const [exams, setTest] = useState([]);
     const { id } = useParams();
 
     const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
+
+
+    const [showPopup, setShowPopup] = useState(false);
+    const [score, setScore] = useState(0);
 
     const handleQuestionClick = (id) => {
         if (!selectedQuestionIds.includes(id)) {
@@ -83,6 +92,32 @@ const TestExam = () => {
             element.scrollIntoView({ behavior: 'smooth' });
         }
     };
+
+
+    const calculateQuestions = () => {
+        let questionCount = 0;
+        exams.map((exam) => (
+            exam.topics.map(topic => {
+                if (topic.questions && topic.questions.length > 0) {
+                    questionCount += topic.questions.length;
+                    console.log(questionCount);
+                }
+            })
+        ));
+        const calculatedScore = 2;
+        setScore(calculatedScore);
+        setShowPopup(true);
+        console.log(`Tổng số câu hỏi userQuestions: ${userQuestions}`);
+        console.log(`Tổng số câu hỏi questionCount: ${questionCount}`);
+    };
+    const allQuestions = exams.reduce((acc, exam) => {
+        const questionsFromTopics = exam.topics.reduce((topicAcc, topic) => {
+            return topicAcc.concat(topic.questions);
+        }, []);
+        return acc.concat(questionsFromTopics);
+    }, []);
+    let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const isConfirmed = confirm('Bạn có chắc chắn muốn nộp bài không?');
@@ -93,15 +128,22 @@ const TestExam = () => {
             let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
 
             console.log(`Số câu trả lời đúng: ${correctAnswersCount}`);
+            console.log(`Tổng số câu hỏi: ${userQuestions}`);
+
+            setQuestions(allQuestions);
+
+            console.log('danh sách câu hỏi');
+            // console.log(allQuestions);
+            console.log(questions);
 
             setIsRunning(false);
             setIsButtonDisabled(true);
-            console.log(isSubmitted);
 
+            console.log(isSubmitted);
             console.log(userAnswers);
-            console.log('Bài thi đã được lưu');
+            console.log('Hoàn thành');
         } else {
-            console.log('Bài thi đã bị hủy.');
+            console.log('Thất bại.');
         }
 
     };
@@ -208,8 +250,40 @@ const TestExam = () => {
                     className="p-2 bg-blue-500 text-white rounded cursor-pointer">Chấm điểm
                 </button>
             </form>
+            <div>
+                {isSubmitted && (
+                    <button onClick={calculateQuestions}
+                        style={{
+                            backgroundColor: '#4CAF50',
+                            color: 'white',
+                            padding: '10px 20px',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer',
+                            fontSize: '16px',
+                        }}
+                    >
+                        Xem tổng kết
+                    </button>
+                )}
+                {showPopup && (
+                    <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg">
+                            <h2 className="text-lg font-semibold">Tổng kết</h2>
+                            <p className="mt-2">Số câu đúng của bạn là: {correctAnswersCount}</p>
+                            <p className="mt-2">Tổng câu hỏi: 4</p>
+                            <button
+                                onClick={() => setShowPopup(false)}
+                                className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                            >
+                                Đóng
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </div>
             <FooterUser />
         </div>
     );
 }
-export default TestExam; 
+export default TestExam;    

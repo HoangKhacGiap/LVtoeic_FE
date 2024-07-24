@@ -28,7 +28,7 @@ function Login() {
     element.focus();
   }, []);
 
-  
+
   return (
     <Form
       onFinishFailed={onFinishFailed}
@@ -39,13 +39,13 @@ function Login() {
       name="basic"
       initialValues={{ remember: true }}
       className={`${localStorage.getItem("user") ? "hidden" : ""
-        } bg-transparent rounded-md h-[500px] p-6 w-[440px]`}
+        } bg-transparent rounded-md h-[500px]  w-full bg-blue-500`}
     >
-      <h1 className="font-bold text-center text-[40px]">Login</h1>
+      <h1 className="font-bold text-center text-[40px]">Đăng nhập</h1>
       <Form.Item
         hasFeedback={status}
-        validateStatus={status ? "error" : ""} // Set the validation status to 'success'
-        // Display a success message
+        validateStatus={status ? "error" : ""} 
+        
         name="username"
         rules={[
           { required: true, message: "Không được để trống!" },

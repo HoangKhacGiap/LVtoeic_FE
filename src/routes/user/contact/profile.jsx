@@ -96,7 +96,7 @@ const Profile = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {/* Example row */}
+                        
                         <tr>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <div className="flex items-center">
@@ -115,59 +115,7 @@ const Profile = () => {
                                 <button className="text-blue-600 hover:text-blue-900">View</button>
                             </td>
                         </tr>
-                        <tr>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div className="flex items-center">
-                                    <div className="ml-3">
-                                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">2023-04-01</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">85</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <button className="text-blue-600 hover:text-blue-900">View</button>
-                            </td>
-                        </tr><tr>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div className="flex items-center">
-                                    <div className="ml-3">
-                                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">2023-04-01</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">85</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <button className="text-blue-600 hover:text-blue-900">View</button>
-                            </td>
-                        </tr><tr>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div className="flex items-center">
-                                    <div className="ml-3">
-                                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">2023-04-01</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">85</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <button className="text-blue-600 hover:text-blue-900">View</button>
-                            </td>
-                        </tr>
-                        {/* Repeat rows as needed */}
+                        
                     </tbody>
                 </table>
             </div>

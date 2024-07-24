@@ -26,7 +26,6 @@ const TestExam = () => {
 
 
     const [showPopup, setShowPopup] = useState(false);
-    const [score, setScore] = useState(0);
 
     const handleQuestionClick = (id) => {
         if (!selectedQuestionIds.includes(id)) {
@@ -34,6 +33,7 @@ const TestExam = () => {
         }
     };
 
+    //lấy dữ liệu câu hỏi bằng api 
     useEffect(() => {
         const fetchExam = async () => {
             try {
@@ -48,6 +48,8 @@ const TestExam = () => {
             fetchExam();
         }
     }, [id]);
+
+    //xử lý trường hợp người dùng thoát khỏi trang web khi đã chọn câu hỏi
     useEffect(() => {
         const handleBeforeUnload = (event) => {
             if (selectedQuestionIds.length > 0) {
@@ -63,6 +65,7 @@ const TestExam = () => {
         };
     }, [selectedQuestionIds]);
 
+    //set thời gian làm bài 
     useEffect(() => {
         if (isRunning) {
             const interval = setInterval(() => {
@@ -72,6 +75,8 @@ const TestExam = () => {
             return () => clearInterval(interval);
         }
     }, [isRunning]);
+
+    //xử lý giây thành thời gian hiển thị
     const formatTime = (seconds) => {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
@@ -85,7 +90,7 @@ const TestExam = () => {
     let questionNumber = 0;
     let questionNumber1 = 0;
 
-
+    //scroll đến câu hỏi chỉ định
     const scrollToQuestion = (questionId) => {
         const element = document.getElementById(questionId);
         if (element) {
@@ -93,7 +98,7 @@ const TestExam = () => {
         }
     };
 
-
+    //tính số câu làm được và chưa làm được
     const calculateQuestions = () => {
         let questionCount = 0;
         exams.map((exam) => (
@@ -104,12 +109,11 @@ const TestExam = () => {
                 }
             })
         ));
-        const calculatedScore = 2;
-        setScore(calculatedScore);
+        setUserQuestions(questionCount);
         setShowPopup(true);
-        console.log(`Tổng số câu hỏi userQuestions: ${userQuestions}`);
-        console.log(`Tổng số câu hỏi questionCount: ${questionCount}`);
     };
+    
+    //tính điểm số câu đúng và sai 
     const allQuestions = exams.reduce((acc, exam) => {
         const questionsFromTopics = exam.topics.reduce((topicAcc, topic) => {
             return topicAcc.concat(topic.questions);
@@ -118,6 +122,7 @@ const TestExam = () => {
     }, []);
     let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
 
+    //xử lý nộp bài
     const handleSubmit = (event) => {
         event.preventDefault();
         const isConfirmed = confirm('Bạn có chắc chắn muốn nộp bài không?');
@@ -133,7 +138,6 @@ const TestExam = () => {
             setQuestions(allQuestions);
 
             console.log('danh sách câu hỏi');
-            // console.log(allQuestions);
             console.log(questions);
 
             setIsRunning(false);
@@ -147,6 +151,8 @@ const TestExam = () => {
         }
 
     };
+
+    //lưu danh sách câu trả lời của user
     const handleAnswerChange = (questionId, answerId, isCorrect) => {
         setUserAnswers(prev => ({
             ...prev,
@@ -253,25 +259,17 @@ const TestExam = () => {
             <div>
                 {isSubmitted && (
                     <button onClick={calculateQuestions}
-                        style={{
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
-                            padding: '10px 20px',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                            fontSize: '16px',
-                        }}
-                    >
+                        className="mt-[10px] bg-green-500 text-white py-2 px-4 border-none rounded cursor-pointer text-lg">
                         Xem tổng kết
                     </button>
                 )}
                 {showPopup && (
                     <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg">
+                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
                             <h2 className="text-lg font-semibold">Tổng kết</h2>
-                            <p className="mt-2">Số câu đúng của bạn là: {correctAnswersCount}</p>
-                            <p className="mt-2">Tổng câu hỏi: 4</p>
+                            <p className="mt-2">Tổng câu hỏi: {userQuestions}</p>
+                            <p className="mt-2">Số câu đúng: {correctAnswersCount}</p>
+                            <p className="mt-2">Thời gian làm bài: {formatTime(seconds)}</p>
                             <button
                                 onClick={() => setShowPopup(false)}
                                 className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"

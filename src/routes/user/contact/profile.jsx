@@ -8,20 +8,28 @@ import FooterUser from "../FooterUser";
 
 const Profile = () => {
     const [profile, setProfile] = useState([]);
+    const [name, setName] = useState();
+    const [address, setAddress] = useState();
+    const [phoneNumber, setPhoneNumber] = useState();
+
+    const [confirmChange, setConfirmChange] = useState(false);
+
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('token');
-
                 const response = await axios.get(`http://localhost:8085/api/user/profile/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
                 });
 
-                // console.log(response.data);
+                console.log(response.data);
                 setProfile(response.data);
+                setName(response.data.name);
+                setAddress(response.data.address);
+                setPhoneNumber(response.data.phoneNumber);
             } catch (err) {
                 console.log(err);
             }
@@ -29,6 +37,26 @@ const Profile = () => {
         fetchProfile();
     }, []);
 
+    //api thay đổi thông tin cá nhân
+    const handleSave = async () => {
+        try {
+          const response = await axios.put('http://localhost:8085/api/user/updateNguoiDung', {
+            name,
+            address,
+            phoneNumber,
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }
+        );
+          console.log('Profile updated successfully:', response.data);
+          window.location.reload();
+        } catch (error) {
+          console.error('Error updating profile:', error);
+        }
+      };
 
     return (
         <div>
@@ -46,38 +74,61 @@ const Profile = () => {
                     <tbody>
 
                         <tr>
-                            <td className="border border-gray-300 px-4 py-2">Name</td>
-                            <td className="border border-gray-300 px-4 py-2">{profile.name}</td>
-                        </tr>
-                        <tr>
                             <td className="border border-gray-300 px-4 py-2">Email</td>
                             <td className="border border-gray-300 px-4 py-2">{profile.email}</td>
                         </tr>
                         <tr>
+                            <td className="border border-gray-300 px-4 py-2">Name</td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <input
+                                    type="text"
+                                    placeholder={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded "
+                                />
+                            </td>
+                        </tr>
+                        <tr>
                             <td className="border border-gray-300 px-4 py-2">Address</td>
-                            <td className="border border-gray-300 px-4 py-2">{profile.address}</td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <input
+                                    type="text"
+                                    placeholder={address}
+                                    onChange={(e) => setAddress(e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded"
+                                />
+                            </td>
                         </tr>
                         <tr>
                             <td className="border border-gray-300 px-4 py-2">Phone Number</td>
-                            <td className="border border-gray-300 px-4 py-2">{profile.phoneNumber}</td>
+                            <td className="border border-gray-300 px-4 py-2">
+                                <input
+                                    type="text"
+                                    placeholder={phoneNumber}
+                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded"
+                                />
+                            </td>
                         </tr>
                         <tr>
                             <td className="border border-gray-300 px-4 py-2">Password</td>
                             <td className="border border-gray-300 px-4 py-2">
-                                <a href="/change-password" className="text-blue-600 hover:text-blue-800 no-underline">change password</a>
+                                <a href="/#" className="text-blue-600 hover:text-blue-800 no-underline">change password</a>
                             </td>
                         </tr>
-                        {/* <tr>
+                        <tr>
                             <td colSpan="2" className="text-center py-4">
-                                <button type="submit" className="mx-auto px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700">
-                                    Submit
+                                <button type="submit"
+                                        onClick={handleSave}
+                                        className="mx-auto px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700">
+                                    Save
                                 </button>
                             </td>
-                        </tr> */}
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div className="mt-20">
+            {/* <div className="mt-20">
                 <table className="w-3/4 mx-auto leading-normal mt-50">
                     <thead>
                         <tr>
@@ -96,7 +147,7 @@ const Profile = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        
+
                         <tr>
                             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <div className="flex items-center">
@@ -115,10 +166,10 @@ const Profile = () => {
                                 <button className="text-blue-600 hover:text-blue-900">View</button>
                             </td>
                         </tr>
-                        
+
                     </tbody>
                 </table>
-            </div>
+            </div> */}
             <FooterUser />
         </div>
     );

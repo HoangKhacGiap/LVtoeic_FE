@@ -5,12 +5,16 @@ import debounce from 'lodash.debounce';
 
 const CreateLevel = () => {
   const [levelList, setLevelList] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [keyword, setKeyword] = useState('');
   const token = localStorage.getItem("token");
 
-  const limit = 1;
+  // const limit = 2;
 
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const updateKeyword = debounce((value) => {
@@ -43,10 +47,12 @@ const CreateLevel = () => {
       });
       console.log(response.data);
       console.log(1);
-      // const data = response.data.contents ? response.data.contents : [];
-      // setLevelList(data);
 
-      setLevelList(response.data.contents);
+      const data = response.data;
+      setLevelList(data.contents);
+      setPageNumber(data.pageNumber);
+      setTotalPage(data.totalPages);
+
     } catch (error) {
       console.error('Error fetching data:', error);
       setLevelList([]);
@@ -56,7 +62,7 @@ const CreateLevel = () => {
   useEffect(() => {
     fetchData();
   }, [token, pageNumber, pageSize, keyword]);
-  const totalPage = Math.ceil(levelList.totalPages / limit);
+
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Levels Manage</h1>
@@ -101,15 +107,23 @@ const CreateLevel = () => {
           ))}
         </ul> */}
         <div>
-          {Array.from({ length: totalPage }, (_, index) => (
-            <button
-              key={index + 1}
-              onClick={() => setCurrentPage(index + 1)}
-              disabled={currentPage === index + 1}
-            >
-              {index + 1}
-            </button>
-          ))}
+          <button
+            onClick={() => setPageNumber(prev => Math.max(prev - 1, 0))}
+            disabled={pageNumber === 0}
+            className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+          >
+            Previous
+          </button>
+          <span className="mx-4 text-lg font-bold">
+            {pageNumber + 1} / {totalPage}
+          </span>
+          <button
+            onClick={() => setPageNumber(prev => Math.min(prev + 1, totalPage - 1))}
+            disabled={pageNumber === totalPage - 1}
+            className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>

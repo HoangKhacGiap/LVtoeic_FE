@@ -19,6 +19,8 @@ const TestExam = () => {
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [userQuestions, setUserQuestions] = useState(0);
 
+    const [testId, setTestId] = useState(0);
+
     const [exams, setTest] = useState([]);
     const { id } = useParams();
 
@@ -113,7 +115,7 @@ const TestExam = () => {
         setUserQuestions(questionCount);
         setShowPopup(true);
     };
-    
+
     //tính điểm số câu đúng và sai 
     const allQuestions = exams.reduce((acc, exam) => {
         const questionsFromTopics = exam.topics.reduce((topicAcc, topic) => {
@@ -129,18 +131,11 @@ const TestExam = () => {
         const isConfirmed = confirm('Bạn có chắc chắn muốn nộp bài không?');
 
         if (isConfirmed) {
+
+            saveTestStructureAndDetail();
+
             setIsSubmitted(true);
-
-            let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
-
-            console.log(`Số câu trả lời đúng: ${correctAnswersCount}`);
-            console.log(`Tổng số câu hỏi: ${userQuestions}`);
-
             setQuestions(allQuestions);
-
-            console.log('danh sách câu hỏi');
-            console.log(questions);
-
             setIsRunning(false);
             setIsButtonDisabled(true);
 
@@ -151,6 +146,20 @@ const TestExam = () => {
             console.log('Thất bại.');
         }
 
+    };
+    
+    //lưu cấu trúc sinh ra bài thi, dùng bài thi + cấu trúc để lưu chi tiết câu hỏi trong bài thi
+    const saveTestStructureAndDetail = async () => {
+        try {
+            const response1 = await axios.post(`http://localhost:8085/api/test/addTest?kindOfStructureId=${id}`);
+            console.log('API TestStructureDetail:', response1.data);
+            setTestId(response1.data);
+
+            const response2 = await axios.post(`http://localhost:8085/api/testDetail/saveList?kindOfStructureId=${id}&testId=${response1.data}`);
+            console.log('API TestDetail:', response2.data);
+        } catch (error) {
+            console.error('Error TestStructureDetail:', error);
+        }
     };
 
     //lưu danh sách câu trả lời của user

@@ -93,7 +93,7 @@ const CreateLevel = () => {
               <td className="border px-4 py-2">{level.name}</td>
               {/* <td className="border px-4 py-2">{datas.content}</td> */}
               <td className="border px-4 py-2 flex justify-center">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button>
+                {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button> */}
                 <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
             </tr>

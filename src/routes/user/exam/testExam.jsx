@@ -27,6 +27,7 @@ const TestExam = () => {
 
     const [showPopup, setShowPopup] = useState(false);
 
+    //xử lý chọn câu hỏi lưu vào mảng selectedQuestionIds
     const handleQuestionClick = (id) => {
         if (!selectedQuestionIds.includes(id)) {
             setSelectedQuestionIds([...selectedQuestionIds, id]);

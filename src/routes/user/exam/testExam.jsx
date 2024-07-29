@@ -133,9 +133,11 @@ const TestExam = () => {
         if (isConfirmed) {
 
             saveTestStructureAndDetail();
+            calculateQuestions();
+            saveResult();
 
             setIsSubmitted(true);
-            setQuestions(allQuestions);
+            // setQuestions(allQuestions);
             setIsRunning(false);
             setIsButtonDisabled(true);
 
@@ -162,6 +164,26 @@ const TestExam = () => {
         }
     };
 
+
+    //lưu kết quả bài thi
+    const saveResult = async () => {
+        try {
+            const token1 = localStorage.getItem('token');
+            const duLieu = `${correctAnswersCount}/${userQuestions}`;
+            const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
+            duLieu,
+            {
+                headers: {
+                    Authorization: `Bearer ${token1}`,
+                    'Content-Type': 'text/plain'
+                }
+            });
+            console.log('API saveResult:', response1.data);
+
+        } catch (error) {
+            console.error('Error saveResult:', error);
+        }
+    };
     //lưu danh sách câu trả lời của user
     const handleAnswerChange = (questionId, answerId, isCorrect) => {
         setUserAnswers(prev => ({

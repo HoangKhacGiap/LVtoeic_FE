@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Radio, Space } from "antd";
-import { UserOutlined, LockOutlined, EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { FormProvider } from "antd/es/form/context";
 import { Select } from "antd";
@@ -15,8 +15,6 @@ import {
 import axios from "axios";
 import { useAPIConText } from "../../lib/context/APIContextProvider";
 function Signup() {
-  const [showPassword, setShowPassword] = useState(false);
-
   const { registerAPI } = useAPIConText();
   const [role, setRole] = useState(2);
   const [status, setStatus] = useState(false);
@@ -49,29 +47,20 @@ function Signup() {
   }, []);
   return (
     <FormProvider>
-      {/* <Select
-        defaultValue={"giangvien"}
-        onChange={(value) => {}}
-        style={{ width: 120 }}
-        options={[
-          { value: "sinhvien", label: "Sinh viên" },
-          { value: "giangvien", label: "Giảng viên" },
-        ]}
-      ></Select> */}
       <Form
         onFinishFailed={onFinishFailed}
         form={form}
         onFinish={onFinish}
         name="basic"
         initialValues={{ remember: true }}
-        className={`rounded-md min-h-[500px] w-full`}
+        className={`rounded-md min-h-[500px] w-[500px] p-6`}
         autoComplete="off"
       >
         <h1 className="font-bold text-center text-[50px]">Đăng ký</h1>
         <Form.Item
           hasFeedback={status}
           validateStatus={status ? "error" : ""}
-
+          
           name="emailsignup"
           className=" "
           rules={[
@@ -105,7 +94,6 @@ function Signup() {
         <Form.Item
           hasFeedback={status}
           validateStatus={status ? "error" : ""}
-
           name="usernamesignup"
           className=" "
           rules={[
@@ -171,17 +159,8 @@ function Signup() {
             name="passwordsignup"
             placeholder="Mật khẩu"
             prefix={<LockOutlined />}
-            type={showPassword ? 'text' : 'password'}
+            type="password"
           ></Input>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500 focus:outline-none"
-            >
-              {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-            </button>
-          </div>
         </Form.Item>
         <Form.Item
           hasFeedback={status}
@@ -215,27 +194,10 @@ function Signup() {
             name="confimpasswordsignup"
             placeholder="Xác nhận mật khẩu"
             prefix={<LockOutlined />}
-            type={showPassword ? 'text' : 'password'}
+            type="password"
           ></Input>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="text-gray-500 focus:outline-none"
-            >
-              {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
-            </button>
-          </div>
         </Form.Item>
-        {/* <Radio.Group
-          onChange={(e) => {
-            setRole(e.target.value);
-            console.log(role);
-          }}
-          value={role}
-        > */}
-        {/* <Radio value={3}>Sinh Viên</Radio> <Radio value={2}>Giảng Viên</Radio> */}
-        {/* </Radio.Group> */}
+        
         <Form.Item>
           <Button htmlType="submit" className="bg-black" type="primary" block>
             Đăng ký
@@ -251,7 +213,6 @@ function Signup() {
           </Form.Item>
         </Form.Item>
       </Form>
-      {/* <Button onClick={registerAPI}>Đăng ký</Button> */}
     </FormProvider>
   );
 }

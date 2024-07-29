@@ -30,7 +30,7 @@ const DialogLogin = ({ children }) => {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogBody
-              width={"500px"}
+              width={"550px"}
               height={"800px"}
               className="bg-white rounded-md"
             >

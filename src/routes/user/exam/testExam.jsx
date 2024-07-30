@@ -179,12 +179,16 @@ const TestExam = () => {
             ));
             const token1 = localStorage.getItem('token');
             const duLieu = `${correctAnswersCount}/${questionCount}`;
+            const duLieuAPI = {
+                totalMark: duLieu,
+                structureId: id
+              };
             const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
-                duLieu,
+                duLieuAPI,
                 {
                     headers: {
                         Authorization: `Bearer ${token1}`,
-                        'Content-Type': 'text/plain'
+                        'Content-Type': 'application/json'
                     }
                 });
             console.log('API saveResult:', response1.data);

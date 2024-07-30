@@ -15,6 +15,8 @@ const Profile = () => {
     const [address, setAddress] = useState();
     const [phoneNumber, setPhoneNumber] = useState();
 
+    let navigate = useNavigate();
+
     const [confirmChange, setConfirmChange] = useState(false);
 
     const token = localStorage.getItem('token');
@@ -127,7 +129,13 @@ const Profile = () => {
 
         return formattedDate;
     }
-
+    //làm lại bài cũ
+    const handleConfirmNavigation = (path) => () => {
+        const isConfirmed = window.confirm('Bạn có muốn làm lại bài kiểm tra này không?');
+        if (isConfirmed) {
+            navigate(path);
+        }
+    };
     return (
         <div>
             <HeaderUser />
@@ -204,7 +212,7 @@ const Profile = () => {
                         <th className="border px-4 py-2">STT</th>
                         <th className="border px-4 py-2">TotalMark</th>
                         <th className="border px-4 py-2">Status</th>
-                        <th className="border px-4 py-2">CreateAt</th>
+                        <th className="border px-4 py-2">DateTime</th>
                         <th className="border px-4 py-2">Action</th>
                     </tr>
                 </thead>
@@ -217,7 +225,10 @@ const Profile = () => {
                             <td className="border px-4 py-2">{formatDate(result.createAt)}</td>
                             {/* <td className="border px-4 py-2">{datas.content}</td> */}
                             <td className="border px-4 py-2 flex justify-center">
-                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rebuild</button>
+                                <button
+                                    onClick={handleConfirmNavigation(`/testExam/${result.structureId}`)} 
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rebuild
+                                </button>
                                 <button className="bg-blue-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">ReExam</button>
                             </td>
                         </tr>

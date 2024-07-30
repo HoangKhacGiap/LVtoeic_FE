@@ -99,12 +99,8 @@ const CreateSkill = () => {
           ))}
         </tbody>
       </table>
+      
       <div>
-        {/* <ul>
-          {levelList.map((item) => (
-            <li key={item.id}>{item.name}</li>
-          ))}
-        </ul> */}
         <div>
           <button
             onClick={() => setPageNumber(prev => Math.max(prev - 1, 0))}

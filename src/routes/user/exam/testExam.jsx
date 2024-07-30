@@ -149,7 +149,7 @@ const TestExam = () => {
         }
 
     };
-    
+
     //lưu cấu trúc sinh ra bài thi, dùng bài thi + cấu trúc để lưu chi tiết câu hỏi trong bài thi
     const saveTestStructureAndDetail = async () => {
         try {
@@ -168,16 +168,25 @@ const TestExam = () => {
     //lưu kết quả bài thi
     const saveResult = async () => {
         try {
+            let questionCount = 0;
+            exams.map((exam) => (
+                exam.topics.map(topic => {
+                    if (topic.questions && topic.questions.length > 0) {
+                        questionCount += topic.questions.length;
+                        console.log(questionCount);
+                    }
+                })
+            ));
             const token1 = localStorage.getItem('token');
-            const duLieu = `${correctAnswersCount}/${userQuestions}`;
+            const duLieu = `${correctAnswersCount}/${questionCount}`;
             const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
-            duLieu,
-            {
-                headers: {
-                    Authorization: `Bearer ${token1}`,
-                    'Content-Type': 'text/plain'
-                }
-            });
+                duLieu,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token1}`,
+                        'Content-Type': 'text/plain'
+                    }
+                });
             console.log('API saveResult:', response1.data);
 
         } catch (error) {

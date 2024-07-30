@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import debounce from 'lodash.debounce';
+import { format, parseISO } from 'date-fns';
+
 
 
 import HeaderUser from "../HeaderUser";
@@ -15,6 +18,63 @@ const Profile = () => {
     const [confirmChange, setConfirmChange] = useState(false);
 
     const token = localStorage.getItem('token');
+
+    const [resultList, setResultList] = useState([]);
+
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+
+    const [pageNumber, setPageNumber] = useState(0);
+    const [pageSize, setPageSize] = useState(5);
+    const [keyword, setKeyword] = useState('');
+
+    const [debouncedKeyword, setDebouncedKeyword] = useState('');
+    const updateKeyword = debounce((value) => {
+        setDebouncedKeyword(value);
+    }, 2000);
+
+    useEffect(() => {
+        return () => {
+            updateKeyword.cancel();
+        };
+    }, []);
+
+    const handleSearch = (e) => {
+        const { value } = e.target;
+        setKeyword(value);
+        updateKeyword(value);
+    };
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8085/api/filterUserResult`, {
+                params: {
+                    pageNumber,
+                    pageSize,
+                    keyword
+                },
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log(response.data);
+            console.log(1);
+
+            const data = response.data;
+            setResultList(data.contents);
+            setPageNumber(data.pageNumber);
+            setTotalPage(data.totalPages);
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setResultList([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [token, pageNumber, pageSize, keyword]);
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -40,23 +100,33 @@ const Profile = () => {
     //api thay đổi thông tin cá nhân
     const handleSave = async () => {
         try {
-          const response = await axios.put('http://localhost:8085/api/user/updateNguoiDung', {
-            name,
-            address,
-            phoneNumber,
-          },
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }
-        );
-          console.log('Profile updated successfully:', response.data);
-          window.location.reload();
+            const response = await axios.put('http://localhost:8085/api/user/updateNguoiDung', {
+                name,
+                address,
+                phoneNumber,
+            },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            console.log('Profile updated successfully:', response.data);
+            window.location.reload();
         } catch (error) {
-          console.error('Error updating profile:', error);
+            console.error('Error updating profile:', error);
         }
-      };
+    };
+
+    const formatDate = (dateStr) => {
+        // Parse ISO date string to Date object
+        const date = parseISO(dateStr);
+
+        // Format date object to desired format
+        const formattedDate = format(date, 'dd/MM/yyyy HH:mm:ss');
+
+        return formattedDate;
+    }
 
     return (
         <div>
@@ -119,8 +189,8 @@ const Profile = () => {
                         <tr>
                             <td colSpan="2" className="text-center py-4">
                                 <button type="submit"
-                                        onClick={handleSave}
-                                        className="mx-auto px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700">
+                                    onClick={handleSave}
+                                    className="mx-auto px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700">
                                     Save
                                 </button>
                             </td>
@@ -128,48 +198,54 @@ const Profile = () => {
                     </tbody>
                 </table>
             </div>
-            {/* <div className="mt-20">
-                <table className="w-3/4 mx-auto leading-normal mt-50">
-                    <thead>
-                        <tr>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                ID
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Ngày
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Điểm
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                Action
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        <tr>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div className="flex items-center">
-                                    <div className="ml-3">
-                                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">2023-04-01</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p className="text-gray-900 whitespace-no-wrap">85</p>
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <button className="text-blue-600 hover:text-blue-900">View</button>
+            <table className="table-auto w-full">
+                <thead>
+                    <tr>
+                        <th className="border px-4 py-2">STT</th>
+                        <th className="border px-4 py-2">TotalMark</th>
+                        <th className="border px-4 py-2">Status</th>
+                        <th className="border px-4 py-2">CreateAt</th>
+                        <th className="border px-4 py-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {resultList.map((result) => (
+                        <tr key={result.id}>
+                            <td className="border px-4 py-2">{result.id}</td>
+                            <td className="border px-4 py-2">{result.totalMark}</td>
+                            <td className="border px-4 py-2">{result.status}</td>
+                            <td className="border px-4 py-2">{formatDate(result.createAt)}</td>
+                            {/* <td className="border px-4 py-2">{datas.content}</td> */}
+                            <td className="border px-4 py-2 flex justify-center">
+                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rebuild</button>
+                                <button className="bg-blue-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">ReExam</button>
                             </td>
                         </tr>
+                    ))}
+                </tbody>
+            </table>
 
-                    </tbody>
-                </table>
-            </div> */}
+            <div>
+                <div>
+                    <button
+                        onClick={() => setPageNumber(prev => Math.max(prev - 1, 0))}
+                        disabled={pageNumber === 0}
+                        className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+                    >
+                        Previous
+                    </button>
+                    <span className="mx-4 text-lg font-bold">
+                        {pageNumber + 1} / {totalPage}
+                    </span>
+                    <button
+                        onClick={() => setPageNumber(prev => Math.min(prev + 1, totalPage - 1))}
+                        disabled={pageNumber === totalPage - 1}
+                        className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-700 transition-colors"
+                    >
+                        Next
+                    </button>
+                </div>
+            </div>
             <FooterUser />
         </div>
     );

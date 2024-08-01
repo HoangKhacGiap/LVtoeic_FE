@@ -30,6 +30,7 @@ import Contact from "./routes/user/contact/contact.jsx";
 import ExamPage from "./routes/user/exam/examPage.jsx";
 import CreateOwnStructure from "./routes/user/exam/CreateStructure.jsx";
 import Profile from "./routes/user/contact/profile.jsx";
+import CreateUser from "./routes/admin/User/createUser.jsx";
 
 import FirstPage from "./routes/user/firstPage";
 
@@ -112,6 +113,14 @@ const App = () => {
         element={
           <MainLayoutAdmin>
             <Admin></Admin>
+          </MainLayoutAdmin>
+        }
+      ></Route>
+      <Route
+        path="/user"
+        element={
+          <MainLayoutAdmin>
+            <CreateUser></CreateUser>
           </MainLayoutAdmin>
         }
       ></Route>

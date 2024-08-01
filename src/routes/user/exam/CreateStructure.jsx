@@ -24,6 +24,19 @@ const CreateStructure = () => {
         };
     };
 
+    const getTotalQuestion = (numberTopic, partId) => {
+        switch (partId) {
+            case '2': return numberTopic * 1;
+            case '3': return numberTopic * 1;
+            case '4': return numberTopic * 3;
+            case '5': return numberTopic * 3;
+            case '1': return numberTopic * 1;
+            case '6': return numberTopic * 4;
+            case '7': return `${numberTopic * 2} - ${numberTopic * 5}`;
+            default: return "Unknown Part";
+        };
+    };
+
     const [formData, setFormData] = useState({
         number_of_topic: '',
         level_of_topic: '',
@@ -170,14 +183,14 @@ const CreateStructure = () => {
 
                 <div className="w-2/3 mx-auto ">
                     <h1 className="mt-5 mb-5 font-bold text-center text-3xl " >Structure Form</h1>
-                    <form onSubmit={handleSubmitForm}>
-
+                    <form   onSubmit={handleSubmitForm}
+                            className="border border-gray-300 rounded p-4">
                         <input
                             name="number_of_topic"
                             type="number"
                             value={formData.number_of_topic}
                             onChange={handleInputChange}
-                            placeholder="Number of Topic"
+                            placeholder="Amount of question"
                         />
                         <select
                             name="level_of_topic"
@@ -224,6 +237,9 @@ const CreateStructure = () => {
                                     Part
                                 </th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    Total Question
+                                </th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                     Action
                                 </th>
                             </tr>
@@ -248,6 +264,11 @@ const CreateStructure = () => {
                                         </p>
                                     </td>
                                     <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <p className="text-gray-900 whitespace-no-wrap">
+                                            {getTotalQuestion(item.number_of_topic, item.part_id)} câu
+                                        </p>
+                                    </td>
+                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                         <button onClick={() => handleDelete(index)}
                                             className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-700 transition duration-300 "
                                         >
@@ -264,14 +285,13 @@ const CreateStructure = () => {
                                         <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
                                             <div className="bg-white p-4 rounded">
                                                 <h2>Edit Structure</h2>
-                                                {/* Form sửa thông tin, có thể tái sử dụng các input và select như trên */}
                                                 <form onSubmit={handleEditFormSubmit}>
                                                     <input
                                                         name="number_of_topic"
                                                         type="number"
                                                         value={editFormData.number_of_topic}
                                                         onChange={handleInputEditChange}
-                                                        placeholder="Number of Topic"
+                                                        placeholder="Amount of question"
                                                     />
                                                     <select
                                                         name="level_of_topic"

@@ -20,7 +20,7 @@ export const navSidebar = [
   {
     listItem: [
       {
-        link: "/Role_Lecturer",
+        link: "/#",
         nameItem: "Dashboard",
         iconItem: HomeIcon,
       },
@@ -34,8 +34,9 @@ export const navSidebar = [
     titleGroup: "Data",
     listItem: [
       {
-        link: "/Role_Lecturer-CreateGame",
-        nameItem: "User Account",
+        // link: "/Role_Lecturer-CreateGame",
+        link: "/user",
+        nameItem: "User",
         iconItem: UserCircleIcon,
       },
       {

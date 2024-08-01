@@ -121,15 +121,15 @@ const Profile = () => {
     };
 
     const formatDate = (dateStr) => {
-        // Parse ISO date string to Date object
+        // chuyển ISO date thành date object
         const date = parseISO(dateStr);
 
-        // Format date object to desired format
+        // sửa format date thành dd/MM/yyyy HH:mm:ss
         const formattedDate = format(date, 'dd/MM/yyyy HH:mm:ss');
 
         return formattedDate;
     }
-    //làm lại bài cũ
+    //xác nhận làm lại bài cũ
     const handleConfirmNavigation = (path) => () => {
         const isConfirmed = window.confirm('Bạn có muốn làm lại bài kiểm tra này không?');
         if (isConfirmed) {
@@ -206,7 +206,7 @@ const Profile = () => {
                     </tbody>
                 </table>
             </div>
-            <table className="table-auto w-full">
+            <table className="table-auto w-4/5 mt-10 mx-auto">
                 <thead>
                     <tr>
                         <th className="border px-4 py-2">STT</th>
@@ -223,21 +223,23 @@ const Profile = () => {
                             <td className="border px-4 py-2">{result.totalMark}</td>
                             <td className="border px-4 py-2">{result.status}</td>
                             <td className="border px-4 py-2">{formatDate(result.createAt)}</td>
-                            {/* <td className="border px-4 py-2">{datas.content}</td> */}
                             <td className="border px-4 py-2 flex justify-center">
                                 <button
                                     onClick={handleConfirmNavigation(`/testExam/${result.structureId}`)} 
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rebuild
+                                    className="bg-green-600 hover:bg-green-800 text-white font-bold py-2 px-4 rounded">Rebuild
                                 </button>
-                                <button className="bg-blue-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-2">ReExam</button>
+                                <button 
+                                    onClick={handleConfirmNavigation(`/testExam/${result.structureId}`)} 
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">ReExam
+                                </button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-            <div>
-                <div>
+            <pagination className="mx-auto bg-blue-400">
+                <div className="mx-auto">
                     <button
                         onClick={() => setPageNumber(prev => Math.max(prev - 1, 0))}
                         disabled={pageNumber === 0}
@@ -256,7 +258,7 @@ const Profile = () => {
                         Next
                     </button>
                 </div>
-            </div>
+            </pagination>
             <FooterUser />
         </div>
     );

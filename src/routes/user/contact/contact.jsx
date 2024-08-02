@@ -9,13 +9,19 @@ import FooterUser from "../FooterUser";
 const Contact = () => {
     const [profile, setProfile] = useState([]);
     const [to, setTo] = useState();
-    const [subject, setSubject] = useState();
+    const [subject, setSubject] = useState('send mail');
     const [text, setText] = useState();
-    const [token, setToken] = useState();
+    const token = localStorage.getItem("token");
+
 
     const fetchData = async () => {
+        const isConfirmed = window.confirm("Xác nhận gửi mail.");
+
+        if (!isConfirmed) {
+            return;
+        }
         try {
-            const response = await axios.get(`http://localhost:8085/mail/send`, {
+            const response = await axios.post(`http://localhost:8085/mail/send`, {
                 params: {
                     to,
                     subject,
@@ -37,14 +43,22 @@ const Contact = () => {
 
     // useEffect(() => {
     //     fetchData();
-    // }, [to, subject, text, token]);
+    // }, [to]);
 
+    const handleSendMail = () => {
+        fetchData();
+    };
 
-
+    const handleEmailChange = (event) => {
+        setTo(event.target.value);
+    };
+    const handleTextChange = (event) => {
+        setText(event.target.value);
+    };
     return (
         <div>
             <HeaderUser />
-            
+
             <h1 className="text-5xl font-bold text-center mx-auto mt-16 mb-10">Need Help? Just fullfil in this form</h1>
             <h2 className="text-3xl text-center mx-auto">Our team will contact you soon</h2>
             <div className="container w-3/4 max-w-xs mx-auto mt-20">
@@ -57,7 +71,13 @@ const Contact = () => {
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="Name" />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                            <label
+                                type="email"
+                                id="to"
+                                name="to"
+                                value={to}
+                                onChange={handleEmailChange}
+                                className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
                             <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" />
@@ -67,11 +87,15 @@ const Contact = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="message">
                             Message
                         </label>
-                        <textarea className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" placeholder="Message"></textarea>
+                        <textarea
+                            name="text"
+                            value={text}
+                            onChange={handleTextChange}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" placeholder="Message"></textarea>
                     </div>
                     <div className="flex items-center justify-between">
-                        <button 
-                            onClick={fetchData()}
+                        <button
+                            onClick={() => fetchData()}
                             className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                             Đăng ký
                         </button>

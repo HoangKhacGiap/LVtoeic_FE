@@ -220,7 +220,7 @@ const TestExam = () => {
 
         <div>
             <HeaderUser />
-            <div className="w-1/6 bg-gray-200 p-4 float-right" style={{ position: 'fixed', top: '100px', right: '10px', display: 'flex', flexWrap: 'wrap', maxWidth: '300px' }}>
+            <div className="w-1/6 bg-gray-200 p-4 float-right" style={{ position: 'relative', top: '100px', right: '10px', display: 'flex', flexWrap: 'wrap', maxWidth: '300px' }}>
                 <h2>{formatTime(seconds)}</h2>
 
                 <h2 className="font-bold mb-4" style={{ width: '100%' }}>Danh sách câu hỏi</h2>

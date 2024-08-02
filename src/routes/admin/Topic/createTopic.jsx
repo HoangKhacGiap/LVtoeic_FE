@@ -18,6 +18,8 @@ const CreateTopic = () => {
   const [keyword, setKeyword] = useState('');
   const token = localStorage.getItem("token");
 
+  const [showPopup, setShowPopup] = useState(false);
+
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const updateKeyword = debounce((value) => {
     setDebouncedKeyword(value);
@@ -132,14 +134,59 @@ const CreateTopic = () => {
               <td className="border px-4 py-2">{getPartById(topic.partId)}</td>
               <td className="border px-4 py-2">{getLevelById(topic.levelId)}</td>
               <td className="border px-4 py-2 flex justify-center">
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button>
+                <button 
+                        onClick={() => setShowPopup(true)}
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button>
                 <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
+      {showPopup && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
+            <h2 className="text-lg font-semibold">Topic details</h2>
+            {topicList.map((topic) => (
+            <tr key={topic.id}>
+              <td className="border px-4 py-2">{topic.id}</td>
+              <td className="border px-4 py-2">{topic.imageName}</td>
+              {/* <td>
+                <img src={`/src/filedata/study4_image/part1_listening/${topic.pathImage}.png`} alt={topic.imageName} className="max-w-[10px]" />
+              </td> */}
+              <td className="border px-4 py-2">{topic.audioName}</td>
+              {/* <td>
+              {topic.pathAudio && (
+                                            <audio controls className="mb-2">
+                                                <source src={`/src/filedata/study4_audio/part1_listening/${topic.pathAudio}.mp3`} type="audio/mp3" />
+                                                Your browser does not support the audio element.
+                                            </audio>
+                                        )}
+              </td> */}
+              <td className="border px-4 py-2">{getPartById(topic.partId)}</td>
+              <td className="border px-4 py-2">{getLevelById(topic.levelId)}</td>
+              <td className="border px-4 py-2 flex justify-center">
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button>
+                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
+              </td>
+            </tr>
+          ))}
+            {/* {error && <p className="text-red-500 text-xs italic">{error}</p>} */}
+            {/* <button
+              onClick={() => createSkill()}
+              className="mr-4 mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Save
+            </button> */}
+            <button
+              onClick={() => setShowPopup(false)}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
       <div>
         <div>
           <button

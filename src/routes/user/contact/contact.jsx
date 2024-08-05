@@ -8,9 +8,9 @@ import FooterUser from "../FooterUser";
 
 const Contact = () => {
     const [profile, setProfile] = useState([]);
-    const [to, setTo] = useState();
-    const [subject, setSubject] = useState('send mail');
-    const [text, setText] = useState();
+    const [to, setTo] = useState('');
+    const [subject, setSubject] = useState('test send mail FE');
+    const [text, setText] = useState('');
     const token = localStorage.getItem("token");
 
 
@@ -21,30 +21,29 @@ const Contact = () => {
             return;
         }
         try {
+            // const formData = new FormData();
+            // formData.append("to", to);
+            // formData.append("subject", subject);
+            // formData.append("text", text);
+
             const response = await axios.post(`http://localhost:8085/mail/send`, {
-                params: {
-                    to,
-                    subject,
-                    text
-                },
+                to: to,
+                subject: subject,
+                text: text
+            }, {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                    // 'Access-Control-Allow-Origin': '*',
+                    // 'Content-Type': 'application/json'
+                }   
             });
             console.log(response.data);
-            console.log("log api");
+            console.log("gửi mail thành công");
 
-            const data = response.data;
         } catch (error) {
-            console.error('Error fetching data:', error);
-            // setResultList([]);
+            console.error('Lỗi ở đây:', error);
         }
     };
-
-    // useEffect(() => {
-    //     fetchData();
-    // }, [to]);
-
     const handleSendMail = () => {
         fetchData();
     };
@@ -75,7 +74,7 @@ const Contact = () => {
                                 type="email"
                                 id="to"
                                 name="to"
-                                value={to}
+                                // value={to}
                                 onChange={handleEmailChange}
                                 className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
@@ -89,13 +88,13 @@ const Contact = () => {
                         </label>
                         <textarea
                             name="text"
-                            value={text}
+                            // value={text}
                             onChange={handleTextChange}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" placeholder="Message"></textarea>
                     </div>
                     <div className="flex items-center justify-between">
                         <button
-                            onClick={() => fetchData()}
+                            onClick={() => handleSendMail()}
                             className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                             Đăng ký
                         </button>

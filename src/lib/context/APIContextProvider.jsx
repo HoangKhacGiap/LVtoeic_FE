@@ -59,7 +59,7 @@ const APIContextProvider = ({ children }) => {
       // navigate("/helloword");
 
       if (data.roles[0].authority === "Role_Admin") {
-        navigate("/admin"); 
+        navigate("/user"); 
       } else if (data.roles[0].authority === "Role_Student") {
         navigate("/helloword");
       } else {

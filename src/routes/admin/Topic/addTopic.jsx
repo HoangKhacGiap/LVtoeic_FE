@@ -2,8 +2,16 @@ import React, { useState, useEffect } from "react";
 import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import debounce from 'lodash.debounce';
+import { useNavigate } from "react-router-dom";
 
 const AddTopic = () => {
+  let navigate = useNavigate();
+
+  const [pngFile, setPngFile] = useState('');
+  const [mp3File, setMp3File] = useState('');
+  const [part, setPart] = useState('');
+  const [level, setLevel] = useState('');
+  const [name, setName] = useState('');
 
   const [partList, setPartList] = useState([]);
 
@@ -62,90 +70,50 @@ const AddTopic = () => {
     fetchData();
   }, [token, pageNumber, pageSize, keyword]);
 
+  const handleFileChange = (event) => {
+    const selectedFiles = Array.from(event.target.files);
+    selectedFiles.forEach(file => {
+      if (file.type === 'image/png' && !pngFile) {
+        setPngFile(file.name);
+      } else if (file.type === 'audio/mpeg' && !mp3File) {
+        setMp3File(file.name);
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
-    window.alert('Lỗi server');
-    // e.preventDefault();
-    // const form = e.target;
-    // const data = new FormData(form);
-    // const name = data.get('name');
-    // const description = data.get('description');
-    // const skill = data.get('skill');
-    // const partNumber = data.get('partNumber');
-    // try {
-    //   const response = await axios.post(`http://localhost:8085/api/part`, {
-    //     name,
-    //     description,
-    //     skill,
-    //     partNumber
-    //   }, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    //   });
-    //   console.log(response.data);
-    //   fetchData();
-    // } catch (error) {
-    //   console.error('Error fetching data:', error);
-    // }
+    // window.alert('Lỗi server');
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`http://localhost:8085/api/topic/createTopic`, {
+        name: name,
+        imageName: pngFile,
+        audioName: mp3File,
+        partId: part,
+        levelId: level
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log(response.data);
+      window.alert('Topic created successfully!');
+      navigate('/topic');
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Add Topic</h1>
-      {/* <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
-          <PlusIcon className="h-5 w-5 mr-2" />
-          Add
-        </button>
-        <div className="mt-4 mb-2">
-          <input className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-            type="search"
-            placeholder="Search..."
-            value={keyword}
-            onChange={handleSearch}
-          />
-        </div> */}
+      
       <form className="mt-8 space-y-6"
         onSubmit={handleSubmit}
       >
         <div className="rounded-md shadow-sm -space-y-px">
-          {/* <div>
-              <label htmlFor="name" className="sr-only">Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Name"
-              />
-            </div>
-            <div>
-              <label htmlFor="description" className="sr-only">Description</label>
-              <input
-                id="description"
-                name="description"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Description"
-              />
-            </div> */}
-          <div>
-            <label htmlFor="skill" className="sr-only">Skill</label>
-            <select
-              id="skill"
-              name="skill"
-              required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            // value={skill}
-            // onChange={(e) => setSkill(e.target.value)}
-            >
-              <option value="">Select Skill</option>
-              <option value="easy">Listening</option>
-              <option value="average">Reading</option>
-              <option value="hard">Speaking</option>
-            </select>
-          </div>
+         
           <div>
             <label htmlFor="part" className="sr-only">Part</label>
             <select
@@ -153,34 +121,34 @@ const AddTopic = () => {
               name="skill"
               required
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            // value={skill}
-            // onChange={(e) => setSkill(e.target.value)}
+              value={part}
+              onChange={(e) => setPart(e.target.value)}
             >
               <option value="">Select Part</option>
-              <option value="easy">Part 1: Listening</option>
-              <option value="average">Part 2: Listening</option>
-              <option value="hard">Part 3: Listening</option>
-              <option value="1">Part 4: Listening</option>
-              <option value="2">Part 5: Listening</option>
-              <option value="3">Part 6: Listening</option>
-              <option value="4">Part 7: Listening</option>
+              <option value="2">Part 1: Listening</option>
+              <option value="3">Part 2: Listening</option>
+              <option value="4">Part 3: Listening</option>
+              <option value="5">Part 4: Listening</option>
+              <option value="1">Part 5: Listening</option>
+              <option value="6">Part 6: Listening</option>
+              <option value="7">Part 7: Listening</option>
 
             </select>
           </div>
           <div>
-            <label htmlFor="skill" className="sr-only">Skill</label>
+            <label htmlFor="skill" className="sr-only">Level</label>
             <select
-              id="skill"
-              name="skill"
+              id="level"
+              name="level"
               required
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-            // value={skill}
-            // onChange={(e) => setSkill(e.target.value)}
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
             >
               <option value="">Select Level</option>
-              <option value="easy">easy</option>
-              <option value="average">hard</option>
-              <option value="hard">average</option>
+              <option value="1">easy</option>
+              <option value="2">hard</option>
+              <option value="3">average</option>
             </select>
           </div>
           <div>
@@ -192,6 +160,8 @@ const AddTopic = () => {
               required
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
           </div>
           <div>
@@ -200,7 +170,9 @@ const AddTopic = () => {
               id="file"
               name="file"
               type="file"
+              multiple
               required
+              onChange={handleFileChange}
               className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             />
           </div>
@@ -214,37 +186,6 @@ const AddTopic = () => {
           </button>
         </div>
       </form>
-      {/* <table className="table-auto w-full mt-8">
-          <thead>
-            <tr>
-              <th className="border px-4 py-2">STT</th>
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Description</th>
-              <th className="border px-4 py-2">Part Number</th>
-              <th className="border px-4 py-2">Skill</th>
-              <th className="border px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {partList.map((part) => (
-              <tr key={part.id}>
-                <td className="border px-4 py-2">{part.stt}</td>
-                <td className="border px-4 py-2">{part.name}</td>
-                <td className="border px-4 py-2">{part.description}</td>
-                <td className="border px-4 py-2">{part.partNumber}</td>
-                <td className="border px-4 py-2">{part.skill}</td>
-                <td className="border px-4 py-2">
-                  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                    Edit
-                  </button>
-                  <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
     </div>
   );
 };

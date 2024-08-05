@@ -32,6 +32,9 @@ import CreateOwnStructure from "./routes/user/exam/CreateStructure.jsx";
 import Profile from "./routes/user/contact/profile.jsx";
 import CreateUser from "./routes/admin/User/createUser.jsx";
 
+import AddPart from "./routes/admin/part/addPart.jsx";
+import AddTopic from "./routes/admin/Topic/addTopic.jsx";
+
 import FirstPage from "./routes/user/firstPage";
 
 const App = () => {
@@ -141,6 +144,14 @@ const App = () => {
         }
       ></Route>
       <Route
+        path="/part/addpart"
+        element={
+          <MainLayoutAdmin>
+            <AddPart></AddPart>
+          </MainLayoutAdmin>
+        }
+      ></Route>
+      <Route
         path="/level"
         element={
           <MainLayoutAdmin>
@@ -161,6 +172,14 @@ const App = () => {
         element={
           <MainLayoutAdmin>
             <CreateTopic></CreateTopic>
+          </MainLayoutAdmin>
+        }
+      ></Route>
+      <Route
+        path="/topic/addtopic"
+        element={
+          <MainLayoutAdmin>
+            <AddTopic></AddTopic>
           </MainLayoutAdmin>
         }
       ></Route>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import debounce from 'lodash.debounce';
+import { set } from "date-fns";
 
 const CreateSkill = () => {
   const [skillList, setSkillList] = useState([]);
@@ -92,7 +93,20 @@ const CreateSkill = () => {
   
       const data = response.data;
     } catch (error) {
-      console.error('Error fetching data:', error);
+      if (error.response.status === 409) {
+        // Server responded with a status other than 2xx
+        console.error('Error response:', error.response);
+        setError(`Kỹ năng bạn nhập đã tồn tại.`);
+        // setName('');
+      } else if (error.request) {
+        // Request was made but no response was received
+        console.error('Error request:', error.request);
+        setError('No response received from the server. Please try again.');
+      } else {
+        // Something else happened while setting up the request
+        console.error('Error message:', error.message);
+        setError('An error occurred while creating the skill. Please try again.');
+      }
     }
   };
   const handleNameChange = (event) => {
@@ -130,8 +144,12 @@ const CreateSkill = () => {
               Save
             </button>
             <button
-              onClick={() => setShowPopup(false)}
-              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+              onClick={() => {
+                setShowPopup(false);
+                setName('');
+                setError('');
+              }}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Đóng
             </button>

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import debounce from 'lodash.debounce';
 
 const CreatePart = () => {
+  let navigate = useNavigate();
+
 
   const [partList, setPartList] = useState([]);
 
@@ -67,7 +70,10 @@ const CreatePart = () => {
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Part Manage</h1>
-      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
+      <button
+        onClick={() => navigate('/part/addpart')}
+
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
         <PlusIcon className="h-5 w-5 mr-2" />
         Add
       </button>
@@ -83,9 +89,9 @@ const CreatePart = () => {
         <thead>
           <tr>
             <th className="border px-4 py-2">STT</th>
-            <th className="border px-4 py-2">name</th>
-            <th className="border px-4 py-2">description</th>
-            <th className="border px-4 py-2">part Number</th>
+            <th className="border px-4 py-2">Name</th>
+            <th className="border px-4 py-2">Description</th>
+            <th className="border px-4 py-2">Part Number</th>
             <th className="border px-4 py-2">Skill</th>
             <th className="border px-4 py-2">Action</th>
           </tr>
@@ -98,9 +104,8 @@ const CreatePart = () => {
               <td className="border px-4 py-2">{part.description}</td>
               <td className="border px-4 py-2">{part.part_number}</td>
               <td className="border px-4 py-2">{part.skillDTO.name}</td>
-              {/* <td className="border px-4 py-2">{datas.content}</td> */}
               <td className="border px-4 py-2 flex justify-center">
-                {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button> */}
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
                 <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
             </tr>
@@ -108,11 +113,7 @@ const CreatePart = () => {
         </tbody>
       </table>
       <div>
-        {/* <ul>
-          {levelList.map((item) => (
-            <li key={item.id}>{item.name}</li>
-          ))}
-        </ul> */}
+
         <div>
           <button
             onClick={() => setPageNumber(prev => Math.max(prev - 1, 0))}

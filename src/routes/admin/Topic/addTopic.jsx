@@ -74,9 +74,11 @@ const AddTopic = () => {
     const selectedFiles = Array.from(event.target.files);
     selectedFiles.forEach(file => {
       if (file.type === 'image/png' && !pngFile) {
-        setPngFile(file.name);
+        const fileName = file.name.replace('.png', '');
+        setPngFile(fileName);
       } else if (file.type === 'audio/mpeg' && !mp3File) {
-        setMp3File(file.name);
+        const fileName = file.name.replace('.mp3', '');
+        setMp3File(fileName);
       }
     });
   };

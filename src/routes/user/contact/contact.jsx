@@ -21,20 +21,22 @@ const Contact = () => {
             return;
         }
         try {
-            // const formData = new FormData();
-            // formData.append("to", to);
-            // formData.append("subject", subject);
-            // formData.append("text", text);
+            const formData = new FormData();
+            formData.append("to", to);
+            formData.append("subject", subject);
+            formData.append("text", text);
+            
 
             const response = await axios.post(`http://localhost:8085/mail/send`, {
-                to: to,
-                subject: subject,
-                text: text
-            }, {
+                params: {
+                    to: to,
+                    subject: subject,
+                    text: text
+                },
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    // 'Access-Control-Allow-Origin': '*',
-                    // 'Content-Type': 'application/json'
+                    'Access-Control-Allow-Methods': '*',
+                    'Content-Type': 'application/json'
                 }   
             });
             console.log(response.data);
@@ -54,6 +56,10 @@ const Contact = () => {
     const handleTextChange = (event) => {
         setText(event.target.value);
     };
+
+    useEffect(()=> {
+        console.log("to", to);
+    },[to])
     return (
         <div>
             <HeaderUser />
@@ -74,12 +80,14 @@ const Contact = () => {
                                 type="email"
                                 id="to"
                                 name="to"
-                                // value={to}
-                                onChange={handleEmailChange}
+                                value={to}
+                                // onChange={handleEmailChange}
                                 className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
-                            <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" />
+                            <input 
+                                onChange={handleEmailChange}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email" />
                         </div>
                     </div>
                     <div className="mb-4">
@@ -88,7 +96,7 @@ const Contact = () => {
                         </label>
                         <textarea
                             name="text"
-                            // value={text}
+                            value={text}
                             onChange={handleTextChange}
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" placeholder="Message"></textarea>
                     </div>

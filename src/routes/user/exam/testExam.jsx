@@ -206,36 +206,46 @@ const TestExam = () => {
     };
     const getPartDescription = (partId) => {
         switch (partId.toString()) {
-          case '1': return "Part 5: You will complete the incomplete sentences by choosing the most appropriate word or phrase from four options.";
-          case '2': return "Part 1: You will listen to a short description and choose the photograph that best matches the description from four options.";
-          case '3': return "Part 2: You will listen to a question or statement and choose the most appropriate response from three options";
-          case '4': return "Part 3: You will listen to conversations between two or more people. Each conversation has three questions, and you choose the correct answer from four options.";
-          case '5': return "Part 4: You will listen to monologues or short talks. Each talk has three questions, and you choose the correct answer from four options.";
-          case '6': return "Part 6: You will complete short texts by choosing the most appropriate word or phrase for each blank from four options.";
-          case '7': return "Part 7: You will read passages, articles, emails, advertisements, etc., and answer questions related to the content of these texts. This part includes single-passage questions and multiple-passage questions.";
-          default: return "Unknown Part";
+            case '1': return "Part 5: You will complete the incomplete sentences by choosing the most appropriate word or phrase from four options.";
+            case '2': return "Part 1: You will listen to a short description and choose the photograph that best matches the description from four options.";
+            case '3': return "Part 2: You will listen to a question or statement and choose the most appropriate response from three options";
+            case '4': return "Part 3: You will listen to conversations between two or more people. Each conversation has three questions, and you choose the correct answer from four options.";
+            case '5': return "Part 4: You will listen to monologues or short talks. Each talk has three questions, and you choose the correct answer from four options.";
+            case '6': return "Part 6: You will complete short texts by choosing the most appropriate word or phrase for each blank from four options.";
+            case '7': return "Part 7: You will read passages, articles, emails, advertisements, etc., and answer questions related to the content of these texts. This part includes single-passage questions and multiple-passage questions.";
+            default: return "Unknown Part";
         };
-      };
+    };
     return (
 
         <div>
             <HeaderUser />
-            <div className="w-1/6 bg-gray-200 p-4 float-right" style={{ position: 'sticky',bottom: '100px', top: '100px', right: '10px', display: 'flex', flexWrap: 'wrap', maxWidth: '300px' }}>
-                <h2>{formatTime(seconds)}</h2>
-
-                <h2 className="font-bold mb-4" style={{ width: '100%' }}>Danh sách câu hỏi</h2>
+            <div className="w-1/6 bg-gray-100 p-4 float-right"
+                style={{
+                    position: 'sticky',
+                    bottom: '100px',
+                    top: '100px',
+                    right: '10px',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    maxWidth: '300px',
+                    overflowY: 'auto',
+                    maxHeight: '500px'
+                }}>
+                <h1 className="text-2xl font-bold text-black">{formatTime(seconds)}</h1>
+                <p className="font=bold text-orange-500 mt-4">Chú ý: bạn có thể click vào số thứ tự câu hỏi trong bài để đánh dấu review</p>
+                <h2 className="font-bold mb-4 mt-4" style={{ width: '100%' }}>Danh sách câu hỏi</h2>
                 {exams.map((exam) => (
-                    
                     exam.topics.map((topic) =>
                         topic.questions.map((question) => {
                             return (
                                 <div
                                     key={question.id}
-                                    className={`cursor-pointer p-2 ${selectedQuestionIds.includes(question.id) ? 'bg-blue-500' : 'hover:bg-gray-300'}`}
+                                    className={`cursor-pointer p-2 ${selectedQuestionIds.includes(question.id) ? 'bg-blue-500' : 'hover:bg-blue-400'}`}
                                     onClick={() => {
                                         scrollToQuestion(question.id);
                                     }}
-                                    style={{ borderRadius: '30%', width: '20px', height: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '5px' }}
+                                    style={{ border: "solid 1px", borderRadius: '30%', width: '29px', height: '29px', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '5px' }}
                                 >
                                     {++questionNumber1}
                                 </div>
@@ -249,58 +259,60 @@ const TestExam = () => {
                     {exams.map((exam) => (
                         <div key={exam.id} className="shadow p-4 mb-4 bg-white">
                             <h1 className="text-2xl font-bold">{getPartDescription(exam.part_id)}</h1>
-                            {/* <p className="text-md mb-2">Number of Topics: {exam.number_of_topic}</p>
-                            <p className="text-md mb-2">Level of Topic: {exam.level_of_topic}</p> */}
-
                             {exam.topics?.length > 0 ? (
                                 exam.topics.map(topic => (
-                                    <div key={topic.id} className="bg-gray-100 p-3 mb-3">
-                                        <p className="text-md mb-2">{topic.content}</p>
-                                        <img src={`/src/filedata/study4_image/part1_listening/${topic.pathImage}.png`} alt={topic.imageName} className="max-w-xl mb-2" />
-                                        {topic.pathAudio && (
-                                            <audio controls className="mb-2">
-                                                <source src={`/src/filedata/study4_audio/part1_listening/${topic.pathAudio}.mp3`} type="audio/mp3" />
-                                                Your browser does not support the audio element.
-                                            </audio>
-                                        )}
-                                        {topic.questions?.map((question) => (
-                                            <div key={question.id} id={question.id} className="pl-4 mb-2">
-                                                {isSubmitted && !userAnswers[question.id] && <p className="text-red-500">Bạn chưa làm câu hỏi này</p>}
-                                                <h3 className="font-semibold">{`${++questionNumber}. ${question.name}`}</h3>
-
-                                                {question.answers?.map((answer) => (
-                                                    <div
-                                                        key={answer.id}
-                                                        // className={`flex items-center mb-2 ${userAnswers[question.id]?.answerId === answer.id ? (answer.correctAnswer ? 'bg-green-500' : 'bg-red-500') : ''}`}
-                                                        className={`flex items-center mb-2 ${isSubmitted && userAnswers[question.id]?.answerId === answer.id ? (answer.correctAnswer ? 'bg-green-500' : 'bg-red-500') : ''}`}
-                                                        onClick={() => {
-                                                            if (!isSubmitted) { // Chỉ xử lý click nếu bài chưa được nộp
-                                                                handleQuestionClick(question.id);
-                                                                handleAnswerChange(question.id, answer.id, !!answer.correctAnswer);
-                                                            }
-                                                        }}>
-                                                        <input
-                                                            type="radio"
-                                                            id={`${answer.id}+${questionNumber}`}
-                                                            name={`question-${question.id}`}
-                                                            value={answer.content}
-                                                            className="mr-2"
-                                                            disabled={isButtonDisabled}
-                                                        />
-                                                        <label htmlFor={`${answer.id}+${questionNumber}`} className="text-md">
-                                                            <div className="flex items-center">
-                                                                {answer.content}
-                                                                {isSubmitted && answer.correctAnswer &&
-                                                                    <svg className="w-6 h-6 text-green-500 ml-2" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path d="M5 13l4 4L19 7"></path>
-                                                                    </svg>
-                                                                }
-                                                            </div>
-                                                        </label>
-                                                    </div>
-                                                ))}
+                                    <div key={topic.id} className="bg-gray-100 p-3 mb-3 flex">
+                                        {topic.pathImage && (
+                                            <div className="flex-shrink-0 mr-4">
+                                                <img src={`/src/filedata/study4_image/part1_listening/${topic.pathImage}.png`} alt={topic.imageName} className="max-w-xl mb-2" />
                                             </div>
-                                        ))}
+                                        )}
+                                        <div className="flex-grow">
+                                            <p className="text-md mb-2">{topic.content}</p>
+                                            {topic.pathAudio && (
+                                                <audio controls className="mb-2">
+                                                    <source src={`/src/filedata/study4_audio/part1_listening/${topic.pathAudio}.mp3`} type="audio/mp3" />
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                            )}
+                                            {topic.questions?.map((question) => (
+                                                <div key={question.id} id={question.id} className="pl-4 mb-2">
+                                                    {isSubmitted && !userAnswers[question.id] && <p className="text-red-500">Bạn chưa làm câu hỏi này</p>}
+                                                    <h3 className="font-semibold">{`${++questionNumber}. ${question.name}`}</h3>
+
+                                                    {question.answers?.map((answer) => (
+                                                        <div
+                                                            key={answer.id}
+                                                            className={`flex items-center mb-2 ${isSubmitted && userAnswers[question.id]?.answerId === answer.id ? (answer.correctAnswer ? 'bg-green-500' : 'bg-red-500') : ''}`}
+                                                            onClick={() => {
+                                                                if (!isSubmitted) { // Chỉ xử lý click nếu bài chưa được nộp
+                                                                    handleQuestionClick(question.id);
+                                                                    handleAnswerChange(question.id, answer.id, !!answer.correctAnswer);
+                                                                }
+                                                            }}>
+                                                            <input
+                                                                type="radio"
+                                                                id={`${answer.id}+${questionNumber}`}
+                                                                name={`question-${question.id}`}
+                                                                value={answer.content}
+                                                                className="mr-2"
+                                                                disabled={isButtonDisabled}
+                                                            />
+                                                            <label htmlFor={`${answer.id}+${questionNumber}`} className="text-md">
+                                                                <div className="flex items-center">
+                                                                    {answer.content}
+                                                                    {isSubmitted && answer.correctAnswer &&
+                                                                        <svg className="w-6 h-6 text-green-500 ml-2" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path d="M5 13l4 4L19 7"></path>
+                                                                        </svg>
+                                                                    }
+                                                                </div>
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 ))
                             ) : (

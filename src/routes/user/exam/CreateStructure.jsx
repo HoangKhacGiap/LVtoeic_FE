@@ -162,7 +162,7 @@ const CreateStructure = () => {
         }
 
     };
-    
+
     useEffect(() => {
         const handleBeforeUnload = e => {
             if (formEntries.length > 0) {
@@ -183,46 +183,51 @@ const CreateStructure = () => {
 
                 <div className="w-2/3 mx-auto ">
                     <h1 className="mt-5 mb-5 font-bold text-center text-3xl " >Structure Form</h1>
-                    <form   onSubmit={handleSubmitForm}
-                            className="border border-gray-300 rounded p-4">
-                        <input
-                            name="number_of_topic"
-                            type="number"
-                            value={formData.number_of_topic}
-                            onChange={handleInputChange}
-                            placeholder="Amount of question"
-                        />
-                        <select
-                            name="level_of_topic"
-                            value={formData.level_of_topic}
-                            onChange={handleInputChange}
-                        >
-                            <option value="">Chọn độ khó</option>
-                            <option value="easy">easy</option>
-                            <option value="average">average</option>
-                            <option value="hard">hard</option>
-                        </select>
-
-                        <select
-                            name="part_id"
-                            value={formData.part_id}
-                            onChange={handleInputChange}
-                        >
-                            <option value="">Chọn Part</option>
-                            <option value="2">Part 1: Listening</option>
-                            <option value="3">Part 2: Listening</option>
-                            <option value="4">Part 3: Listening</option>
-                            <option value="5">Part 4: Listening</option>
-                            <option value="1">Part 5: Reading</option>
-                            <option value="6">Part 6: Reading</option>
-                            <option value="7">Part 7: Reading</option>
-                        </select>
-                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto">
-                            Add Structure
-                        </button>
-
-                    </form>
-
+                    <div className="flex justify-center items-center ">
+                        <form onSubmit={handleSubmitForm}
+                            className="w-1/2 border border-black-500 rounded p-4 space-y-4">
+                            <select
+                                name="part_id"
+                                value={formData.part_id}
+                                onChange={handleInputChange}
+                                className="border border-gray-300 p-2 rounded w-full"
+                            >
+                                <option value="">Chọn Part</option>
+                                <option value="2">Part 1: Listening</option>
+                                <option value="3">Part 2: Listening</option>
+                                <option value="4">Part 3: Listening</option>
+                                <option value="5">Part 4: Listening</option>
+                                <option value="1">Part 5: Reading</option>
+                                <option value="6">Part 6: Reading</option>
+                                <option value="7">Part 7: Reading</option>
+                            </select>
+                            <select
+                                name="level_of_topic"
+                                value={formData.level_of_topic}
+                                onChange={handleInputChange}
+                                className="border border-gray-300 p-2 rounded w-full"
+                            >
+                                <option value="">Chọn độ khó</option>
+                                <option value="easy">easy</option>
+                                <option value="average">average</option>
+                                <option value="hard">hard</option>
+                            </select>
+                            <input
+                                name="number_of_topic"
+                                type="number"
+                                value={formData.number_of_topic}
+                                required
+                                onChange={handleInputChange}
+                                placeholder="Amount of question"
+                                className="border border-gray-300 p-2 rounded w-full"
+                            />
+                            <div className="flex justify-center">
+                                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                                    Add Structure
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                     <table className="min-w-full leading-normal mt-10">
                         <thead>
                             <tr>
@@ -333,13 +338,15 @@ const CreateStructure = () => {
                             ))}
                         </tbody>
                     </table>
-                    <button
-                        type="submit"
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mx-auto"
-                        onClick={submitFormEntries}
-                    >
-                        Begin The Test
-                    </button>
+                    <div className="flex justify-center mt-10 mb-5">
+                        <button
+                            type="submit"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={submitFormEntries}
+                        >
+                            Begin The Test
+                        </button>
+                    </div>
                 </div>
             </nav>
             <FooterUser />

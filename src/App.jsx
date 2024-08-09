@@ -32,6 +32,9 @@ import CreateOwnStructure from "./routes/user/exam/CreateStructure.jsx";
 import Profile from "./routes/user/contact/profile.jsx";
 import CreateUser from "./routes/admin/User/createUser.jsx";
 
+import MainTest from "../src/routes/user/exam/mainTest.jsx";
+import MainStart from "../src/routes/user/exam/mainStart.jsx";
+
 import AddPart from "./routes/admin/part/addPart.jsx";
 import AddTopic from "./routes/admin/Topic/addTopic.jsx";
 import AddQuestion from "./routes/admin/question/addQuestion.jsx";
@@ -230,6 +233,16 @@ const App = () => {
       <Route
         path="/testExam/:id"
         element={<TestExam></TestExam>}
+      ></Route>
+
+      <Route
+        path="/mainTest/:id"
+        element={<MainTest></MainTest>}
+      ></Route>
+
+      <Route
+        path="/mainStart/"
+        element={<MainStart></MainStart>}
       ></Route>
 
       <Route

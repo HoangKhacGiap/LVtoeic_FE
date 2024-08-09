@@ -15,10 +15,11 @@ const Header = () => {
         </h1> 
       </div>
       <nav>
-        <ul className="flex text-white font-medium space-x-5">
-          <li className="hover:bg-blue-500 hover:text-white">
+        <ul className="flex flex-col md:flex-row text-white font-medium space-y-4 md:space-y-0 md:space-x-10 cursor-pointer">
+          <li className="hover:text-black hover:bg-gray-200 border rounded p-2">
             {token !== null ? (
               <Link
+                className="p-2"
                 to={"/"}
                 onClick={() => {
                   localStorage.removeItem("token");

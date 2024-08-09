@@ -47,28 +47,29 @@ const HeaderUser = () => {
             <nav className={`md:flex md:items-center md:justify-center ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
                 <ul className="flex flex-col md:flex-row text-white font-medium space-y-4 md:space-y-0 md:space-x-10 cursor-pointer">
                     <li className={getLinkClass("/ExamPage")}>
-                        <Link to={"/ExamPage"}>
+                        <Link to={"/ExamPage"} className="p-2">
                             Excercise
                         </Link>
                     </li>
-                    <li className={getLinkClass("/helloword")}>
-                        <Link to={"/helloword"}>
+                    <li className={getLinkClass("/mainStart")}>
+                        <Link to={"/mainStart"} className="p-2">
                             Exam Test
                         </Link>
                     </li>
                     <li className={getLinkClass("/contact")}>
-                        <Link to={"/contact"}>
+                        <Link to={"/contact"} className="p-2">
                             Contact
                         </Link>
                     </li>
                     <li className={getLinkClass("/profile")}>
-                        <Link to={"/profile"}>
+                        <Link to={"/profile"} className="p-2">
                             Profile
                         </Link>
                     </li>
                     <li className={getLinkClass("/")}>
                         {token !== null ? (
                             <Link
+                                className="p-2"
                                 to={"/"}
                                 onClick={() => {
                                     localStorage.removeItem("token");

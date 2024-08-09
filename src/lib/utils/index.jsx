@@ -40,6 +40,11 @@ export const navSidebar = [
         iconItem: UserCircleIcon,
       },
       {
+        link: "/level",
+        nameItem: "Level",
+        iconItem: PlusCircleIcon,
+      },
+      {
         link: "/skill",
         nameItem: "Skill",
         iconItem: PlusCircleIcon,
@@ -47,11 +52,6 @@ export const navSidebar = [
       {
         link: "/part",
         nameItem: "Part",
-        iconItem: PlusCircleIcon,
-      },
-      {
-        link: "/level",
-        nameItem: "Level",
         iconItem: PlusCircleIcon,
       },
       {

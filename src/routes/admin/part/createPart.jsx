@@ -35,6 +35,34 @@ const CreatePart = () => {
     updateKeyword(value);
   };
 
+  const handleDeletePart = async (id) => {
+    try {
+      const isConfirmed = window.confirm("Bạn có chắc muốn xóa part này không?");
+      if (!isConfirmed) {
+        return;
+      }
+      
+      const response = await axios.delete(`http://localhost:8085/api/deletePart`, {
+        params: {
+          partId: id
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log('Part deleted successfully:', response.data);
+      fetchData();
+    } catch (error) {
+      if (error.response.status === 409) {
+        // Server responded with a status other than 2xx
+        alert('part đã có câu hỏi không thể xóa');
+      }
+      else if (error.response.status === 403) {
+        alert('Bạn không có quyền xóa part này');
+      }
+    }
+  };
+
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:8085/api/filterPart`, {
@@ -106,7 +134,9 @@ const CreatePart = () => {
               <td className="border px-4 py-2">{part.skillDTO.name}</td>
               <td className="border px-4 py-2 flex justify-center">
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
+                <button 
+                  onClick={() => handleDeletePart(part.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
             </tr>
           ))}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
 import debounce from 'lodash.debounce';
+import '../level/level.css';
 
 const CreateLevel = () => {
   const [levelList, setLevelList] = useState([]);
@@ -38,6 +39,35 @@ const CreateLevel = () => {
     updateKeyword(value);
   };
 
+  const handleDeleteLevel = async (id) => {
+    try {
+      const isConfirmed = window.confirm("Bạn có chắc muốn xóa level này không?");
+      if (!isConfirmed) {
+        return;
+      }
+      
+      const response = await axios.delete(`http://localhost:8085/api/deleteLevel`, {
+        params: {
+          levelId: id
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      // alert("Xóa thành công");
+      console.log('Level deleted successfully:', response.data);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting level:', error);
+      if (error.response.status === 409) {
+        // Server responded with a status other than 2xx
+        alert('level đã có topic không thể xóa');
+      }
+      else if (error.response.status === 403) {
+        alert('Bạn không có quyền xóa level này');
+      }
+    }
+  };
   const fetchData = async () => {
     try {
       const response = await axios.get(`http://localhost:8085/api/filterLevel`, {
@@ -60,6 +90,7 @@ const CreateLevel = () => {
 
     } catch (error) {
       console.error('Error fetching data:', error);
+      
       setLevelList([]);
     }
   };
@@ -73,7 +104,7 @@ const CreateLevel = () => {
       setError('Please enter a Level name.');
       return;
     }
-    const isConfirmed = window.confirm("Bạn có chắc muốn thêm skill này không??");
+    const isConfirmed = window.confirm("Xác nhận thêm!!");
     
     if (!isConfirmed) {
       return; // Nếu người dùng chọn "Cancel", dừng lại
@@ -88,21 +119,19 @@ const CreateLevel = () => {
         }
       });
       setShowPopup(false);
-      window.location.reload();
       console.log(response.data);
       console.log(1);
-  
-      const data = response.data;
+      fetchData();
     } catch (error) {
       if (error.response.status === 409) {
         // Server responded with a status other than 2xx
         console.error('Error response:', error.response);
         setError(`Kỹ năng bạn nhập đã tồn tại.`);
         // setName('');
-      } else if (error.request) {
+      } else if (error.request.status === 403) {
         // Request was made but no response was received
         console.error('Error request:', error.request);
-        setError('No response received from the server. Please try again.');
+        setError('Bạn không có quyền tạo level.');
       } else {
         // Something else happened while setting up the request
         console.error('Error message:', error.message);
@@ -126,7 +155,7 @@ const CreateLevel = () => {
       </button>
       {showPopup && (
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
+          <div className="fadein-animation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
             <h2 className="text-lg font-semibold">Add Level</h2>
             <div>
               <input
@@ -181,7 +210,9 @@ const CreateLevel = () => {
               <td className="border px-4 py-2">{level.name}</td>
               <td className="border px-4 py-2 flex justify-center">
                 {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button> */}
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
+                <button 
+                  onClick={() => handleDeleteLevel(level.id)}
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
             </tr>
           ))}

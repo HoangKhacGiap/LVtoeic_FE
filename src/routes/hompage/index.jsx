@@ -28,7 +28,7 @@ const Homepage = () => {
                   className="w-48 h-12 rounded-md bg-[#8e8e8e] hover:bg-slate-300"
                 >
                   <Link
-                    className="w-48 h-12 rounded-md flex justify-center items-center"
+                    className="w-48 h-12 rounded-md flex justify-center items-center "
                     to={item.link ? item.link : ""}
                   >
                     {item.nameItem}

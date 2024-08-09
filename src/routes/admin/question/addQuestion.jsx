@@ -146,6 +146,7 @@ const QuestionForm = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
+                    required
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
             </div>
@@ -156,11 +157,12 @@ const QuestionForm = () => {
                     name="topicId"
                     value={formData.topicId}
                     onChange={handleChange}
-                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500"
+                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-10 overflow-y-auto"
                 >
                     <option value="">Chọn một chủ đề</option>
                     {topics.map((topic) => (
-                        <option key={topic.id} value={topic.id}>
+                        <option 
+                            key={topic.id} value={topic.id}>
                             {topic.imageName}
                         </option>
                     ))}

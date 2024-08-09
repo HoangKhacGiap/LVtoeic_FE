@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid";
 import { Button, Input } from "@chakra-ui/react";
 import { useStateContext } from "../../../lib/context/StateContextProvider";
@@ -8,6 +10,7 @@ import debounce from 'lodash.debounce';
 
 
 const CreateTopic = () => {
+  let navigate = useNavigate();
   const [topicList, setTopicList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -118,7 +121,9 @@ const CreateTopic = () => {
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Question Manage</h1>
-      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
+      <button 
+        onClick={()=>navigate('/question/addQuestion')}
+        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
         <PlusIcon className="h-5 w-5 mr-2" />
         Add
       </button>

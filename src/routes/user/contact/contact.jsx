@@ -13,6 +13,9 @@ const Contact = () => {
     const [text, setText] = useState('');
     const token = localStorage.getItem("token");
 
+    console.log("to:", to);
+    console.log("subject:", subject);
+    console.log("text:", text);
 
     const fetchData = async () => {
         const isConfirmed = window.confirm("Xác nhận gửi mail.");
@@ -35,8 +38,10 @@ const Contact = () => {
                 },
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Access-Control-Allow-Origin": "*",
                     'Access-Control-Allow-Methods': '*',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    // 'Origin': 'http://localhost:5173'
                 }   
             });
             console.log(response.data);
@@ -81,7 +86,6 @@ const Contact = () => {
                                 id="to"
                                 name="to"
                                 value={to}
-                                // onChange={handleEmailChange}
                                 className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                                 Email
                             </label>
@@ -98,11 +102,11 @@ const Contact = () => {
                             name="text"
                             value={text}
                             onChange={handleTextChange}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" placeholder="Message"></textarea>
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="message" type="text" placeholder="Message"></textarea>
                     </div>
                     <div className="flex items-center justify-between">
                         <button
-                            onClick={() => handleSendMail()}
+                            onClick={() => fetchData()}
                             className=" bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
                             Đăng ký
                         </button>

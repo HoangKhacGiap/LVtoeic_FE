@@ -34,6 +34,7 @@ import CreateUser from "./routes/admin/User/createUser.jsx";
 
 import AddPart from "./routes/admin/part/addPart.jsx";
 import AddTopic from "./routes/admin/Topic/addTopic.jsx";
+import AddQuestion from "./routes/admin/question/addQuestion.jsx";
 
 import FirstPage from "./routes/user/firstPage";
 
@@ -191,6 +192,15 @@ const App = () => {
           </MainLayoutAdmin>
         }
       ></Route>
+      <Route
+        path="/question/addquestion"
+        element={
+          <MainLayoutAdmin>
+            <AddQuestion></AddQuestion>
+          </MainLayoutAdmin>
+        }
+      ></Route>
+
       <Route
         path="/Role_Lecturer-CreateGame"
         element={

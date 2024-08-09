@@ -10,6 +10,8 @@ import HeaderUser from "../HeaderUser";
 import FooterUser from "../FooterUser";
 
 const Profile = () => {
+    const [check, setCheck] = useState(false);
+
     const [profile, setProfile] = useState([]);
     const [name, setName] = useState();
     const [address, setAddress] = useState();
@@ -114,7 +116,9 @@ const Profile = () => {
                 }
             );
             console.log('Profile updated successfully:', response.data);
+            // setCheck(true);
             window.location.reload();
+            // fetchProfile();
         } catch (error) {
             console.error('Error updating profile:', error);
         }

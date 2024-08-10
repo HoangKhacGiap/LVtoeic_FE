@@ -108,7 +108,7 @@ const AddTopic = () => {
   }
 
   return (
-    <div className="w-full h-full p-12">
+    <div className="w-full h-full bg-gray-100 p-12 rounded-md shadow-lg">
       <h1 className="font-semibold my-12 text-center text-3xl">Add Topic</h1>
       
       <form className="mt-8 space-y-6"
@@ -117,12 +117,12 @@ const AddTopic = () => {
         <div className="rounded-md shadow-sm -space-y-px">
          
           <div>
-            <label htmlFor="part" className="sr-only">Part</label>
+            <label htmlFor="part" className="mt-4 block text-sm font-medium text-gray-700">Chọn part</label>
             <select
               id="skill"
               name="skill"
               required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              className="appearance-none  relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               value={part}
               onChange={(e) => setPart(e.target.value)}
             >
@@ -138,12 +138,12 @@ const AddTopic = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="skill" className="sr-only">Level</label>
+            <label htmlFor="skill" className="mt-4 block text-sm font-medium text-gray-700">Chọn độ khó</label>
             <select
               id="level"
               name="level"
               required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              className="appearance-none  relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               value={level}
               onChange={(e) => setLevel(e.target.value)}
             >
@@ -154,13 +154,13 @@ const AddTopic = () => {
             </select>
           </div>
           <div>
-            <label htmlFor="name" className="sr-only">Name</label>
+            <label htmlFor="name" className="mt-4 block text-sm font-medium text-gray-700">Tên topic</label>
             <input
               id="name"
               name="name"
               type="text"
               required
-              className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              className="appearance-none  relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}

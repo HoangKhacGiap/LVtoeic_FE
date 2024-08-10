@@ -5,13 +5,13 @@ import Sidebar from "../../../routes/admin/Sidebar";
 
 const MainLayoutAdmin = ({ children }) => {
   return (
-    <div className="w-screen h-full ">
+    <div className="w-screen min-h-[500px] ">
       <header>
         <Header></Header>
       </header>
-      <main className="w-full flex h-screen">
+      <main className="w-full flex min-h-[550px]">
         <Sidebar></Sidebar>
-        <section className="w-full h-full">{children}</section>
+        <section className="w-full min-h-[500px]">{children}</section>
       </main>
       <footer className="bg-gray-800 text-white text-center py-4">
         <p>© 2024 Khắc Giáp company. No copy right.</p>

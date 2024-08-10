@@ -11,8 +11,8 @@ import { set } from "date-fns";
 const MainTest = () => {
     const [correctAnswersCount, setCorrectAnswersCount] = useState();
     //set thời gian 60 phút
-    const [beginSeconds] = useState(3600);
-    const [seconds, setSeconds] = useState(3600);
+    const [beginSeconds] = useState(5);
+    const [seconds, setSeconds] = useState(5);
 
     const [userAnswers, setUserAnswers] = useState({});
     const [questions, setQuestions] = useState({});
@@ -37,7 +37,7 @@ const MainTest = () => {
         try {
             let correctAnswersCount1 = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
             console.log('correctAnswersCount1:', correctAnswersCount1);
-            
+
             setCorrectAnswersCount(correctAnswersCount1);
             console.log('correctAnswersCount:', correctAnswersCount);
             let questionCount = 0;
@@ -72,14 +72,20 @@ const MainTest = () => {
     };
     let hasSubmitted = false;
     //xử lý nộp bài khi thời gian bằng 0
-    const handleSubmitWhenTimeDone = () => {
-        if (hasSubmitted) return;
+    const handleSubmitWhenTimeDone = async (event) => {
+        if (event) {
+            event.preventDefault();
+        }
+        
+        if (hasSubmitted) {
+            return;
+        }
         hasSubmitted = true;
+
         // saveTestStructureAndDetail();
         calculateQuestions();
-        saveResult();
+        await saveResult(); // Đảm bảo gọi async function với await
 
-        // setQuestions(allQuestions);
         setIsSubmitted(true);
         setIsRunning(false);
         setIsButtonDisabled(true);
@@ -88,6 +94,7 @@ const MainTest = () => {
         console.log(userAnswers);
         console.log('Hoàn thành');
     };
+
     //xử lý chọn câu hỏi lưu vào mảng selectedQuestionIds
     const handleQuestionClick = (id) => {
         if (!selectedQuestionIds.includes(id)) {

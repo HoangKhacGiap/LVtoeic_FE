@@ -6,7 +6,7 @@ const Sidebar = () => {
   return (
     <VStack
       align={"flex-start"}
-      className="w-[30%] border-r border-black"
+      className="w-[20%] border-r border-black"
       divider={<StackDivider></StackDivider>}
     >
       {navSidebar.map((item, index) => (

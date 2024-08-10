@@ -6,6 +6,10 @@ import axios from "axios";
 import debounce from 'lodash.debounce';
 
 const QuestionForm = () => {
+    const [pageNumber, setPageNumber] = useState(0);
+    const [pageSize, setPageSize] = useState(20);
+    const [keyword, setKeyword] = useState('');
+
     let navigate = useNavigate();
     const token = localStorage.getItem("token");
     const [topics, setTopics] = useState([]);
@@ -61,22 +65,28 @@ const QuestionForm = () => {
 
     // Hàm xóa câu trả lời
     const removeAnswer = (index) => {
-        const newAnswers = formData.answers.filter((_, i) => i !== index);
-        setFormData({
-            ...formData,
-            answers: newAnswers,
-        });
+        if (formData.answers.length > 1) {
+            const newAnswers = formData.answers.filter((_, i) => i !== index);
+            setFormData({
+                ...formData,
+                answers: newAnswers,
+            });
+        } else {
+            // Có thể hiển thị thông báo hoặc xử lý khác nếu cần
+            console.log("Phải có ít nhất một câu trả lời.");
+            alert("Phải có ít nhất một câu trả lời.");
+        }
     };
 
     useEffect(() => {
         const fetchTopics = async () => {
             try {
                 const response = await axios.get(`http://localhost:8085/api/topic/filterTopic`, {
-                    // params: {
-                    //     pageNumber,
-                    //     pageSize,
-                    //     keyword
-                    // },
+                    params: {
+                        pageNumber,
+                        pageSize,
+                        keyword
+                    },
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -138,82 +148,86 @@ const QuestionForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white shadow-md rounded-md">
-            <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">Nội dung câu hỏi:</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-            </div>
-
-            <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Chọn chủ đề:</label>
-                <select
-                    name="topicId"
-                    value={formData.topicId}
-                    onChange={handleChange}
-                    className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-10 overflow-y-auto"
-                >
-                    <option value="">Chọn một chủ đề</option>
-                    {topics.map((topic) => (
-                        <option 
-                            key={topic.id} value={topic.id}>
-                            {topic.imageName}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            {formData.answers.map((answer, index) => (
-                <div key={index} className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">Câu trả lời {index + 1}:</label>
+        <div className="bg-gray-100 p-12 rounded-md shadow-lg">
+            <h1 className="mt-10 text-3xl font-bold mb-4 mx-auto text-center">Add question</h1>
+            <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white shadow-md rounded-md">
+                <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">Nội dung câu hỏi:</label>
                     <input
                         type="text"
-                        name="content"
-                        value={answer.content}
-                        onChange={(e) => handleAnswerChange(index, e)}
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
-                    <label className="inline-flex items-center mt-2">
-                        <input
-                            type="checkbox"
-                            name="correctAnswer"
-                            checked={answer.correctAnswer}
-                            onChange={(e) => handleAnswerChange(index, e)}
-                            className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
-                        />
-                        <span className="ml-2 text-sm text-gray-700">Đúng</span>
-                    </label>
-                    <button
-                        type="button"
-                        onClick={() => removeAnswer(index)}
-                        className="ml-4 inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                    >
-                        Xóa
-                    </button>
                 </div>
-            ))}
 
-            <button
-                type="button"
-                onClick={addAnswer}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-                Thêm câu trả lời
-            </button>
+                <div>
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Chọn chủ đề:</label>
+                    <select
+                        name="topicId"
+                        value={formData.topicId}
+                        onChange={handleChange}
+                        required
+                        className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-10 overflow-y-auto"
+                    >
+                        <option value="">Chọn một chủ đề</option>
+                        {topics.map((topic) => (
+                            <option
+                                key={topic.id} value={topic.id}>
+                                {topic.imageName}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
-            <button
-                type="submit"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                Lưu
-            </button>
-        </form>
+                {formData.answers.map((answer, index) => (
+                    <div key={index} className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Câu trả lời {index + 1}:</label>
+                        <input
+                            type="text"
+                            name="content"
+                            value={answer.content}
+                            onChange={(e) => handleAnswerChange(index, e)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                        <label className="inline-flex items-center mt-2">
+                            <input
+                                type="checkbox"
+                                name="correctAnswer"
+                                checked={answer.correctAnswer}
+                                onChange={(e) => handleAnswerChange(index, e)}
+                                className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                            />
+                            <span className="ml-2 text-sm text-gray-700">Đúng</span>
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => removeAnswer(index)}
+                            className="ml-4 inline-flex items-center px-3 py-1.5 border border-transparent text-xs leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        >
+                            Xóa
+                        </button>
+                    </div>
+                ))}
+
+                <button
+                    type="button"
+                    onClick={addAnswer}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                    Thêm câu trả lời
+                </button>
+
+                <button
+                    type="submit"
+                    className="ml-5 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                    Lưu
+                </button>
+            </form>
+        </div>
     );
 };
 

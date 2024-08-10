@@ -9,8 +9,9 @@ import FooterUser from "../FooterUser";
 import { set } from "date-fns";
 
 const MainTest = () => {
+    const [shouldSubmit, setShouldSubmit] = useState(false);
     //set thời gian 60 phút
-    const [seconds, setSeconds] = useState(30);
+    const [seconds, setSeconds] = useState(5);
 
     const [userAnswers, setUserAnswers] = useState({});
     const [questions, setQuestions] = useState({});
@@ -29,14 +30,76 @@ const MainTest = () => {
 
 
     const [showPopup, setShowPopup] = useState(false);
+    //lưu kết quả bài thi
+    const saveResult = async () => {
+        try {
+            let questionCount = 0;
+            exams.map((exam) => (
+                exam.topics.map(topic => {
+                    if (topic.questions && topic.questions.length > 0) {
+                        questionCount += topic.questions.length;
+                        console.log(questionCount);
+                    }
+                })
+            ));
+            const token1 = localStorage.getItem('token');
+            const duLieu = `${correctAnswersCount}/${questionCount}`;
+            const duLieuAPI = {
+                totalMark: duLieu,
+                structureId: id
+            };
+            const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
+                duLieuAPI,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token1}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+            console.log('API saveResult:', response1.data);
 
+        } catch (error) {
+            console.error('Error saveResult:', error);
+        }
+    };
+    //xử lý nộp bài khi thời gian bằng 0
+    const handleSubmitWhenTimeDone = () => {
+        
+            // saveTestStructureAndDetail();
+            calculateQuestions();
+            saveResult();
+
+            // setQuestions(allQuestions);
+            setIsSubmitted(true);
+            setIsRunning(false);
+            setIsButtonDisabled(true);
+
+            console.log(isSubmitted);
+            console.log(userAnswers);
+            console.log('Hoàn thành');
+        
+
+    };
     //xử lý chọn câu hỏi lưu vào mảng selectedQuestionIds
     const handleQuestionClick = (id) => {
         if (!selectedQuestionIds.includes(id)) {
             setSelectedQuestionIds([...selectedQuestionIds, id]);
         }
     };
-
+    //tính số câu làm được và chưa làm được
+    const calculateQuestions = () => {
+        let questionCount = 0;
+        exams.map((exam) => (
+            exam.topics.map(topic => {
+                if (topic.questions && topic.questions.length > 0) {
+                    questionCount += topic.questions.length;
+                    console.log(questionCount);
+                }
+            })
+        ));
+        setUserQuestions(questionCount);
+        // setShowPopup(true);
+    };
     //lấy dữ liệu câu hỏi bằng api 
     useEffect(() => {
         const fetchExam = async () => {
@@ -76,9 +139,9 @@ const MainTest = () => {
                 setSeconds(prevSeconds => {
                     if (prevSeconds > 0) {
                         return prevSeconds - 1;
-                    } else {
+                    } else if (prevSeconds === 0) {
                         clearInterval(interval);
-                        handleSubmit();
+                        handleSubmitWhenTimeDone();
                         return 0;
                     }
                 });
@@ -110,20 +173,7 @@ const MainTest = () => {
         }
     };
 
-    //tính số câu làm được và chưa làm được
-    const calculateQuestions = () => {
-        let questionCount = 0;
-        exams.map((exam) => (
-            exam.topics.map(topic => {
-                if (topic.questions && topic.questions.length > 0) {
-                    questionCount += topic.questions.length;
-                    console.log(questionCount);
-                }
-            })
-        ));
-        setUserQuestions(questionCount);
-        setShowPopup(true);
-    };
+    
 
     //tính điểm số câu đúng và sai 
     const allQuestions = exams.reduce((acc, exam) => {
@@ -141,7 +191,7 @@ const MainTest = () => {
 
         if (isConfirmed) {
 
-            saveTestStructureAndDetail();
+            // saveTestStructureAndDetail();
             calculateQuestions();
             saveResult();
 
@@ -159,6 +209,14 @@ const MainTest = () => {
 
     };
 
+    //gọi hàm này khi shouldSubmit thay đổi tráng gọi như cũ để bị render nhiều lần
+    // useEffect(() => {
+    //     if (shouldSubmit) {
+    //         handleSubmitWhenTimeDone();
+    //     }
+    // }, [shouldSubmit]);
+
+    
     //lưu cấu trúc sinh ra bài thi, dùng bài thi + cấu trúc để lưu chi tiết câu hỏi trong bài thi
     const saveTestStructureAndDetail = async () => {
         try {
@@ -174,38 +232,7 @@ const MainTest = () => {
     };
 
 
-    //lưu kết quả bài thi
-    const saveResult = async () => {
-        try {
-            let questionCount = 0;
-            exams.map((exam) => (
-                exam.topics.map(topic => {
-                    if (topic.questions && topic.questions.length > 0) {
-                        questionCount += topic.questions.length;
-                        console.log(questionCount);
-                    }
-                })
-            ));
-            const token1 = localStorage.getItem('token');
-            const duLieu = `${correctAnswersCount}/${questionCount}`;
-            const duLieuAPI = {
-                totalMark: duLieu,
-                structureId: id
-            };
-            const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
-                duLieuAPI,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token1}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-            console.log('API saveResult:', response1.data);
-
-        } catch (error) {
-            console.error('Error saveResult:', error);
-        }
-    };
+    
     //lưu danh sách câu trả lời của user
     const handleAnswerChange = (questionId, answerId, isCorrect) => {
         setUserAnswers(prev => ({
@@ -337,7 +364,11 @@ const MainTest = () => {
             </form>
             <div>
                 {isSubmitted && (
-                    <button onClick={calculateQuestions}
+                    <button 
+                        onClick={() => {
+                            calculateQuestions();
+                            setShowPopup(true);
+                        }}
                         className="mt-[10px] bg-green-500 text-white py-2 px-4 border-none rounded cursor-pointer text-lg">
                         Xem tổng kết
                     </button>

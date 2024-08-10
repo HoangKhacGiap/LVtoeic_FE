@@ -9,9 +9,10 @@ import FooterUser from "../FooterUser";
 import { set } from "date-fns";
 
 const MainTest = () => {
-    const [shouldSubmit, setShouldSubmit] = useState(false);
+    const [correctAnswersCount, setCorrectAnswersCount] = useState();
     //set thời gian 60 phút
-    const [seconds, setSeconds] = useState(5);
+    const [beginSeconds] = useState(3600);
+    const [seconds, setSeconds] = useState(3600);
 
     const [userAnswers, setUserAnswers] = useState({});
     const [questions, setQuestions] = useState({});
@@ -29,10 +30,16 @@ const MainTest = () => {
     const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
 
 
+
     const [showPopup, setShowPopup] = useState(false);
     //lưu kết quả bài thi
     const saveResult = async () => {
         try {
+            let correctAnswersCount1 = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
+            console.log('correctAnswersCount1:', correctAnswersCount1);
+            
+            setCorrectAnswersCount(correctAnswersCount1);
+            console.log('correctAnswersCount:', correctAnswersCount);
             let questionCount = 0;
             exams.map((exam) => (
                 exam.topics.map(topic => {
@@ -43,11 +50,12 @@ const MainTest = () => {
                 })
             ));
             const token1 = localStorage.getItem('token');
-            const duLieu = `${correctAnswersCount}/${questionCount}`;
+            const duLieu = `${correctAnswersCount1}/${questionCount}`;
             const duLieuAPI = {
                 totalMark: duLieu,
                 structureId: id
             };
+            console.log('duLieuAPI:', duLieuAPI);
             const response1 = await axios.post(`http://localhost:8085/api/saveResult`,
                 duLieuAPI,
                 {
@@ -62,23 +70,23 @@ const MainTest = () => {
             console.error('Error saveResult:', error);
         }
     };
+    let hasSubmitted = false;
     //xử lý nộp bài khi thời gian bằng 0
     const handleSubmitWhenTimeDone = () => {
-        
-            // saveTestStructureAndDetail();
-            calculateQuestions();
-            saveResult();
+        if (hasSubmitted) return;
+        hasSubmitted = true;
+        // saveTestStructureAndDetail();
+        calculateQuestions();
+        saveResult();
 
-            // setQuestions(allQuestions);
-            setIsSubmitted(true);
-            setIsRunning(false);
-            setIsButtonDisabled(true);
+        // setQuestions(allQuestions);
+        setIsSubmitted(true);
+        setIsRunning(false);
+        setIsButtonDisabled(true);
 
-            console.log(isSubmitted);
-            console.log(userAnswers);
-            console.log('Hoàn thành');
-        
-
+        console.log(isSubmitted);
+        console.log(userAnswers);
+        console.log('Hoàn thành');
     };
     //xử lý chọn câu hỏi lưu vào mảng selectedQuestionIds
     const handleQuestionClick = (id) => {
@@ -98,6 +106,8 @@ const MainTest = () => {
             })
         ));
         setUserQuestions(questionCount);
+        console.log('tính số câu hỏi xong');
+        // saveResult();
         // setShowPopup(true);
     };
     //lấy dữ liệu câu hỏi bằng api 
@@ -140,13 +150,13 @@ const MainTest = () => {
                     if (prevSeconds > 0) {
                         return prevSeconds - 1;
                     } else if (prevSeconds === 0) {
-                        clearInterval(interval);
                         handleSubmitWhenTimeDone();
+                        clearInterval(interval);
                         return 0;
                     }
                 });
             }, 1000);
-    
+
             return () => clearInterval(interval);
         }
     }, [isRunning]);
@@ -159,6 +169,13 @@ const MainTest = () => {
 
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
     };
+
+    //tính thời gian làm bài
+    const calculateElapsedTime = (time) => {
+        const elapsedTime = beginSeconds - time;
+        return formatTime(elapsedTime);
+    };
+
     if (exams.length === 0) {
         return <div>Loading...</div>;
     }
@@ -173,7 +190,7 @@ const MainTest = () => {
         }
     };
 
-    
+
 
     //tính điểm số câu đúng và sai 
     const allQuestions = exams.reduce((acc, exam) => {
@@ -182,7 +199,6 @@ const MainTest = () => {
         }, []);
         return acc.concat(questionsFromTopics);
     }, []);
-    let correctAnswersCount = Object.values(userAnswers).filter(answer => answer.isCorrect).length;
 
     //xử lý nộp bài
     const handleSubmit = (event) => {
@@ -216,7 +232,7 @@ const MainTest = () => {
     //     }
     // }, [shouldSubmit]);
 
-    
+
     //lưu cấu trúc sinh ra bài thi, dùng bài thi + cấu trúc để lưu chi tiết câu hỏi trong bài thi
     const saveTestStructureAndDetail = async () => {
         try {
@@ -232,7 +248,7 @@ const MainTest = () => {
     };
 
 
-    
+
     //lưu danh sách câu trả lời của user
     const handleAnswerChange = (questionId, answerId, isCorrect) => {
         setUserAnswers(prev => ({
@@ -364,7 +380,7 @@ const MainTest = () => {
             </form>
             <div>
                 {isSubmitted && (
-                    <button 
+                    <button
                         onClick={() => {
                             calculateQuestions();
                             setShowPopup(true);
@@ -379,7 +395,7 @@ const MainTest = () => {
                             <h2 className="text-lg font-semibold">Tổng kết</h2>
                             <p className="mt-2">Tổng câu hỏi: {userQuestions}</p>
                             <p className="mt-2">Số câu đúng: {correctAnswersCount}</p>
-                            <p className="mt-2">Thời gian làm bài: {formatTime(seconds)}</p>
+                            <p className="mt-2">Thời gian làm bài: {calculateElapsedTime(seconds)}</p>
                             <button
                                 onClick={() => setShowPopup(false)}
                                 className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"

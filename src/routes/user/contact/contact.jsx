@@ -13,9 +13,6 @@ const Contact = () => {
     const [text, setText] = useState('');
     const token = localStorage.getItem("token");
 
-    console.log("to:", to);
-    console.log("subject:", subject);
-    console.log("text:", text);
 
     const fetchData = async () => {
         const isConfirmed = window.confirm("Xác nhận gửi mail.");

@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 
 const QuestionForm = () => {
     const [pageNumber, setPageNumber] = useState(0);
-    const [pageSize, setPageSize] = useState(20);
+    const [pageSize, setPageSize] = useState(100);
     const [keyword, setKeyword] = useState('');
 
     let navigate = useNavigate();
@@ -170,7 +170,8 @@ const QuestionForm = () => {
                         value={formData.topicId}
                         onChange={handleChange}
                         required
-                        className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-10 overflow-y-auto"
+                        // size={10}
+                        className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-[50px] overflow-y-auto"
                     >
                         <option value="">Chọn một chủ đề</option>
                         {topics.map((topic) => (

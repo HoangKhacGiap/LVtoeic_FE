@@ -7,6 +7,9 @@ import { set } from "date-fns";
 import '../skill/skill.css';
 
 const CreateSkill = () => {
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [currentSkill, setCurrentSkill] = useState(null);
+
   const [showSuccess, setShowSuccess] = useState(false);
   const [skillList, setSkillList] = useState([]);
 
@@ -150,8 +153,59 @@ const CreateSkill = () => {
       }
     }
   };
+  const editSkill = async (idlevel, namelevel) => {
+    const isConfirmed = window.confirm("Xác nhận sửa!!");
+
+    if (!isConfirmed) {
+      return; // Nếu người dùng chọn "Cancel", dừng lại
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:8085/api/updateSkill`, {
+        id: idlevel,
+        name: namelevel,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setIsEditPopupOpen(false);
+      console.log(response.data);
+      console.log('hoan thanh edit');
+      fetchData();
+    } catch (error) {
+      if (error.response.status === 409) {
+        // Server responded with a status other than 2xx
+        console.error('Error response:', error.response);
+        setError(`skill bạn nhập đã tồn tại.`);
+        // setName('');
+      } else if (error.request.status === 403) {
+        // Request was made but no response was received
+        console.error('Error request:', error.request);
+        setError('Bạn không có quyền sửa skill này.');
+      } else {
+        // Something else happened while setting up the request
+        console.error('Error message:', error.message);
+        setError('An error occurred while creating the level. Please try again.');
+      }
+    }
+  };
+
   const handleNameChange = (event) => {
     setName(event.target.value);
+  };
+  
+  const handleEditButtonClick = (skill) => {
+    setCurrentSkill(skill);
+    setIsEditPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsEditPopupOpen(false);
+    setCurrentSkill(null);
+  };
+  const handleEditNameChange = (e) => {
+    setCurrentSkill({ ...currentSkill, name: e.target.value });
   };
   return (
     <div className="w-full h-full p-12">
@@ -214,6 +268,40 @@ const CreateSkill = () => {
           </div>
         </div>
       )}
+      {isEditPopupOpen && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="fadein-animation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
+            <h2 className="text-lg font-semibold">Edit Level</h2>
+            <div>
+              <input
+                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                type="text"
+                name="name"
+                placeholder="input your level name"
+                value={currentSkill.name}
+                onChange={handleEditNameChange}
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs italic">{error}</p>}
+            <button
+              onClick={() => editSkill(currentSkill.id, currentSkill.name)}
+              className="mr-4 mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setIsEditPopupOpen(false);
+                // setName('');
+                setError('');
+              }}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
       <div className="mt-4 mb-2">
         <input className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
           type="search"
@@ -237,6 +325,10 @@ const CreateSkill = () => {
               <td className="border px-4 py-2">{skill.name}</td>
               <td className="border px-4 py-2 flex justify-center">
                 {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button> */}
+                <button
+                  onClick={() => handleEditButtonClick({ id: skill.id, name: skill.name })}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit
+                </button>
                 <button 
                   onClick={() => handleDeleteSkill(skill.id)}
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>

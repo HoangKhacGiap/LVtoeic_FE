@@ -3,8 +3,12 @@ import { CheckCircleIcon, PencilIcon, PlusIcon } from "@heroicons/react/24/solid
 import axios from "axios";
 import debounce from 'lodash.debounce';
 import '../level/level.css';
+import { set } from "date-fns";
+import { id } from "date-fns/locale";
 
 const CreateLevel = () => {
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState(null);
   const [levelList, setLevelList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -45,7 +49,7 @@ const CreateLevel = () => {
       if (!isConfirmed) {
         return;
       }
-      
+
       const response = await axios.delete(`http://localhost:8085/api/deleteLevel`, {
         params: {
           levelId: id
@@ -90,7 +94,7 @@ const CreateLevel = () => {
 
     } catch (error) {
       console.error('Error fetching data:', error);
-      
+
       setLevelList([]);
     }
   };
@@ -105,11 +109,11 @@ const CreateLevel = () => {
       return;
     }
     const isConfirmed = window.confirm("Xác nhận thêm!!");
-    
+
     if (!isConfirmed) {
       return; // Nếu người dùng chọn "Cancel", dừng lại
     }
-  
+
     try {
       const response = await axios.post(`http://localhost:8085/api/createLevel`, {
         name,
@@ -140,15 +144,65 @@ const CreateLevel = () => {
     }
   };
 
+  const editSkill = async (idlevel, namelevel) => {
+    const isConfirmed = window.confirm("Xác nhận sửa!!");
+
+    if (!isConfirmed) {
+      return; // Nếu người dùng chọn "Cancel", dừng lại
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:8085/api/updateLevel`, {
+        id: idlevel,
+        name: namelevel,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setIsEditPopupOpen(false);
+      console.log(response.data);
+      console.log('hoan thanh edit');
+      fetchData();
+    } catch (error) {
+      if (error.response.status === 409) {
+        // Server responded with a status other than 2xx
+        console.error('Error response:', error.response);
+        setError(`level bạn nhập đã tồn tại.`);
+        // setName('');
+      } else if (error.request.status === 403) {
+        // Request was made but no response was received
+        console.error('Error request:', error.request);
+        setError('Bạn không có quyền sửa level.');
+      } else {
+        // Something else happened while setting up the request
+        console.error('Error message:', error.message);
+        setError('An error occurred while creating the level. Please try again.');
+      }
+    }
+  };
   const handleNameChange = (event) => {
     setName(event.target.value);
+  };
+
+  const handleEditButtonClick = (level) => {
+    setCurrentLevel(level);
+    setIsEditPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsEditPopupOpen(false);
+    setCurrentLevel(null);
+  };
+  const handleEditNameChange = (e) => {
+    setCurrentLevel({ ...currentLevel, name: e.target.value });
   };
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Levels Manage</h1>
-      <button 
+      <button
         onClick={() => setShowPopup(true)}
-        
+
         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
         <PlusIcon className="h-5 w-5 mr-2" />
         Add
@@ -156,7 +210,7 @@ const CreateLevel = () => {
       {showPopup && (
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
           <div className="fadein-animation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
-            <h2 className="text-lg font-semibold">Add Level</h2>
+            <h2 className=" text-lg font-semibold">Add Level</h2>
             <div>
               <input
                 className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
@@ -178,6 +232,40 @@ const CreateLevel = () => {
               onClick={() => {
                 setShowPopup(false);
                 setName('');
+                setError('');
+              }}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
+      {isEditPopupOpen && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="fadein-animation fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white p-5 z-50 rounded-lg shadow-lg min-w-[300px] min-h-[200px]">
+            <h2 className="text-lg font-semibold">Edit Level</h2>
+            <div>
+              <input
+                className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+                type="text"
+                name="name"
+                placeholder="input your level name"
+                value={currentLevel.name}
+                onChange={handleEditNameChange}
+              />
+            </div>
+            {error && <p className="text-red-500 text-xs italic">{error}</p>}
+            <button
+              onClick={() => editSkill(currentLevel.id, currentLevel.name)}
+              className="mr-4 mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setIsEditPopupOpen(false);
+                // setName('');
                 setError('');
               }}
               className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
@@ -209,8 +297,12 @@ const CreateLevel = () => {
               <td className="border px-4 py-2">{level.id}</td>
               <td className="border px-4 py-2">{level.name}</td>
               <td className="border px-4 py-2 flex justify-center">
-                {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Details</button> */}
-                <button 
+                <button
+                  onClick={() => handleEditButtonClick({ id: level.id, name: level.name })}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit
+                </button>
+
+                <button
                   onClick={() => handleDeleteLevel(level.id)}
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
               </td>
@@ -218,7 +310,7 @@ const CreateLevel = () => {
           ))}
         </tbody>
       </table>
-      
+
       <div>
         <div>
           <button

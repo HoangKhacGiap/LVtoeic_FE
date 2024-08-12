@@ -5,6 +5,10 @@ import debounce from 'lodash.debounce';
 import { useNavigate } from "react-router-dom";
 
 const AddTopic = () => {
+  const [levelList, setLevelList] = useState([]);
+  const [partList, setPartList] = useState([]);
+
+
   let navigate = useNavigate();
 
   const [pngFile, setPngFile] = useState('');
@@ -13,13 +17,12 @@ const AddTopic = () => {
   const [level, setLevel] = useState('');
   const [name, setName] = useState('');
 
-  const [partList, setPartList] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
 
   const [pageNumber, setPageNumber] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(50);
   const [keyword, setKeyword] = useState('');
   const token = localStorage.getItem("token");
 
@@ -41,6 +44,32 @@ const AddTopic = () => {
   };
 
   const fetchData = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8085/api/filterLevel`, {
+        params: {
+          pageNumber,
+          pageSize,
+          keyword
+        },
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      console.log(response.data);
+      console.log(1);
+
+      const data = response.data;
+      setLevelList(data.contents);
+      setPageNumber(data.pageNumber);
+      setTotalPage(data.totalPages);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+
+      setLevelList([]);
+    }
+  };
+  const fetchDataPart = async () => {
     try {
       const response = await axios.get(`http://localhost:8085/api/filterPart`, {
         params: {
@@ -65,22 +94,42 @@ const AddTopic = () => {
       setPartList([]);
     }
   };
-
   useEffect(() => {
     fetchData();
+    fetchDataPart();
   }, [token, pageNumber, pageSize, keyword]);
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
+    let pngCount = 0;
+    let mp3Count = 0;
+
     selectedFiles.forEach(file => {
-      if (file.type === 'image/png' && !pngFile) {
-        const fileName = file.name.replace('.png', '');
-        setPngFile(fileName);
-      } else if (file.type === 'audio/mpeg' && !mp3File) {
-        const fileName = file.name.replace('.mp3', '');
-        setMp3File(fileName);
+      if (file.type === 'image/png') {
+        pngCount++;
+      } else if (file.type === 'audio/mpeg') {
+        mp3Count++;
       }
     });
+
+    if (pngCount > 1 || mp3Count > 1) {
+      // setError('Chỉ được phép chọn một hình ảnh và một âm thanh.');
+      window.alert('Hệ thống chỉ hỗ trợ 1 hình ảnh và 1 âm thanh.');
+      // fetchData();
+      return;
+    }
+    else{
+      selectedFiles.forEach(file => {
+        if (file.type === 'image/png' && !pngFile) {
+          const fileName = file.name.replace('.png', '');
+          setPngFile(fileName);
+        } else if (file.type === 'audio/mpeg' && !mp3File) {
+          const fileName = file.name.replace('.mp3', '');
+          setMp3File(fileName);
+        }
+      });
+    }
+    // setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -110,13 +159,30 @@ const AddTopic = () => {
   return (
     <div className="w-full h-full bg-gray-100 p-12 rounded-md shadow-lg">
       <h1 className="font-semibold my-12 text-center text-3xl">Add Topic</h1>
-      
+
       <form className="mt-8 space-y-6"
         onSubmit={handleSubmit}
       >
         <div className="rounded-md shadow-sm -space-y-px">
-         
           <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Chọn part:</label>
+            <select
+              name="topicId"
+              value={part}
+              onChange={(e) => setPart(e.target.value)}
+              required
+              className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-[50px] overflow-y-auto"
+            >
+              <option value="">Chọn một part</option>
+              {partList.map((part) => (
+                <option
+                  key={part.id} value={part.id}>
+                  {part.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* <div>
             <label htmlFor="part" className="mt-4 block text-sm font-medium text-gray-700">Chọn part</label>
             <select
               id="skill"
@@ -136,8 +202,26 @@ const AddTopic = () => {
               <option value="7">Part 7: Listening</option>
 
             </select>
-          </div>
+          </div> */}
           <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Chọn Level:</label>
+            <select
+              name="topicId"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              required
+              className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-[50px] overflow-y-auto"
+            >
+              <option value="">Chọn một level</option>
+              {levelList.map((part) => (
+                <option
+                  key={part.id} value={part.id}>
+                  {part.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* <div>
             <label htmlFor="skill" className="mt-4 block text-sm font-medium text-gray-700">Chọn độ khó</label>
             <select
               id="level"
@@ -152,7 +236,7 @@ const AddTopic = () => {
               <option value="2">hard</option>
               <option value="3">average</option>
             </select>
-          </div>
+          </div> */}
           <div>
             <label htmlFor="name" className="mt-4 block text-sm font-medium text-gray-700">Tên topic</label>
             <input

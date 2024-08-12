@@ -6,6 +6,8 @@ import axios from "axios";
 import debounce from 'lodash.debounce';
 
 const AddPart = () => {
+  const [skillList, setSkillList] = useState([]);
+
   let navigate = useNavigate();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -45,7 +47,7 @@ const AddPart = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:8085/api/filterPart`, {
+      const response = await axios.get(`http://localhost:8085/api/filterSkill`, {
         params: {
           pageNumber,
           pageSize,
@@ -56,16 +58,16 @@ const AddPart = () => {
         }
       });
       console.log(response.data);
-      console.log(1);
+      console.log("Hoan thanh");
 
       const data = response.data;
-      setPartList(data.contents);
+      setSkillList(data.contents);
       setPageNumber(data.pageNumber);
       setTotalPage(data.totalPages);
 
     } catch (error) {
       console.error('Error fetching data:', error);
-      setPartList([]);
+      setSkillList([]);
     }
   };
 
@@ -132,21 +134,22 @@ const AddPart = () => {
             />
           </div>
           <div>
-            <label htmlFor="skill" className="mt-4 block text-sm font-medium text-gray-700">
-              Chọn kỹ năng
-            </label>
+            <label className="block text-gray-700 text-sm font-bold mb-2">Chọn kỹ năng:</label>
             <select
-              id="skill"
-              name="skill"
-              required
-              className="appearance-none  relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              name="topicId"
               value={skill}
               onChange={handleSkillChange}
+              required
+              // size={10}
+              className="block w-full bg-white border border-gray-300 text-gray-700 py-2 px-3 rounded leading-tight focus:outline-none focus:bg-white focus:border-blue-500 max-h-[50px] overflow-y-auto"
             >
-              <option value="">Select Skill</option>
-              <option value="1">Listening</option>
-              <option value="2">Reading</option>
-              <option value="3">Speaking</option>
+              <option value="">Chọn một kỹ năng</option>
+              {skillList.map((skill) => (
+                <option
+                  key={skill.id} value={skill.id}>
+                  {skill.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>

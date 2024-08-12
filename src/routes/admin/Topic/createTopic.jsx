@@ -108,7 +108,7 @@ const CreateTopic = () => {
       case '5': return "Part_4: Listening";
       case '6': return "Part_6: Reading";
       case '7': return "Part_7: Reading";
-      default: return "Unknown Part";
+      default: return "New Part";
     };
   };
 
@@ -117,7 +117,7 @@ const CreateTopic = () => {
       case '1': return "easy";
       case '2': return "average";
       case '3': return "hard";
-      default: return "Unknown Level";
+      default: return "New Level";
     };
   };
   return (
@@ -168,6 +168,7 @@ const CreateTopic = () => {
               </td> */}
               <td className="border px-4 py-2">{getPartById(topic.partId)}</td>
               <td className="border px-4 py-2">{getLevelById(topic.levelId)}</td>
+              
               <td className="border px-4 py-2 flex justify-center">
                 <button
                   onClick={() => setShowPopup(true)}

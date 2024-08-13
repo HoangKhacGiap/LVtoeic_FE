@@ -42,32 +42,32 @@ export const navSidebar = [
       {
         link: "/level",
         nameItem: "Level",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
       {
         link: "/skill",
         nameItem: "Skill",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
       {
         link: "/part",
         nameItem: "Part",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
       {
         link: "/topic",
         nameItem: "Topic",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
       {
         link: "/question",
         nameItem: "Question",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
       {
         link: "/structure",
         nameItem: "Structure",
-        iconItem: PlusCircleIcon,
+        iconItem: DocumentPlusIcon,
       },
     ],
   },

@@ -9,6 +9,8 @@ import FooterUser from "../FooterUser";
 import { set } from "date-fns";
 
 const MainTest = () => {
+    const [disabled, setDisabled] = useState(false);
+
     const [correctAnswersCount, setCorrectAnswersCount] = useState();
     //set thời gian 60 phút
     const [beginSeconds] = useState(5);
@@ -76,17 +78,18 @@ const MainTest = () => {
         if (event) {
             event.preventDefault();
         }
-        
+
         if (hasSubmitted) {
             return;
         }
         hasSubmitted = true;
-
+        alert('Bạn đã hết thời gian làm bài');
         // saveTestStructureAndDetail();
-        calculateQuestions();
-        await saveResult(); // Đảm bảo gọi async function với await
+        // calculateQuestions();
+        // await saveResult(); 
+        // Đảm bảo gọi async function với await
 
-        setIsSubmitted(true);
+        // setIsSubmitted(true);
         setIsRunning(false);
         setIsButtonDisabled(true);
 
@@ -218,6 +221,7 @@ const MainTest = () => {
             calculateQuestions();
             saveResult();
 
+            setDisabled(true);
             setIsSubmitted(true);
             // setQuestions(allQuestions);
             setIsRunning(false);
@@ -291,7 +295,9 @@ const MainTest = () => {
                     overflowY: 'auto',
                     maxHeight: '500px'
                 }}>
-                <h1 className="text-2xl font-bold text-black">{formatTime(seconds)}</h1>
+                <h1 className={`text-2xl font-bold ${isRunning ? 'text-black' : 'text-red-500'}`}>
+                    {formatTime(seconds)}
+                </h1>
                 <p className="font=bold text-orange-500 mt-4">Chú ý: bạn có thể click vào số thứ tự câu hỏi trong bài để đánh dấu review</p>
                 <h2 className="font-bold mb-4 mt-4" style={{ width: '100%' }}>Danh sách câu hỏi</h2>
                 {exams.map((exam) => (
@@ -381,7 +387,7 @@ const MainTest = () => {
                     ))}
                 </div>
                 <button type="submit"
-                    disabled={isButtonDisabled}
+                    disabled={disabled}
                     className="p-2 bg-blue-500 text-white rounded cursor-pointer">Chấm điểm
                 </button>
             </form>

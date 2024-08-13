@@ -31,6 +31,7 @@ import ExamPage from "./routes/user/exam/examPage.jsx";
 import CreateOwnStructure from "./routes/user/exam/CreateStructure.jsx";
 import Profile from "./routes/user/contact/profile.jsx";
 import CreateUser from "./routes/admin/User/createUser.jsx";
+import Dashboard from "./routes/admin/dashboard/dashboard.jsx";
 
 import MainTest from "../src/routes/user/exam/mainTest.jsx";
 import MainStart from "../src/routes/user/exam/mainStart.jsx";
@@ -119,7 +120,7 @@ const App = () => {
         path="/admin"
         element={
           <MainLayoutAdmin>
-            <Admin></Admin>
+            <Dashboard></Dashboard>
           </MainLayoutAdmin>
         }
       ></Route>

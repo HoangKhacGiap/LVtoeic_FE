@@ -20,7 +20,7 @@ export const navSidebar = [
   {
     listItem: [
       {
-        link: "/#",
+        link: "/admin",
         nameItem: "Dashboard",
         iconItem: HomeIcon,
       },

@@ -19,7 +19,7 @@ const MainStart = () => {
 
     let navigate = useNavigate();
     const handleSubmit = () => {
-        navigate('/mainTest/12');
+        navigate('/mainTest/35');
     };
 
     return (

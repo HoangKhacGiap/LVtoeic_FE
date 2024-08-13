@@ -9,6 +9,10 @@ const Dashboard = () => {
     const [countUser, setCountUser] = useState(null);
     const [countStructure, setCountStructure] = useState(null);
     const [countTopic, setCountTopic] = useState(null);
+    const [countLevel, setCountLevel] = useState(null);
+    const [countSkill, setCountSkill] = useState(null);
+    const [countPart, setCountPart] = useState(null);
+    const [countQuestion, setCountQuestion] = useState(null);
 
     const token = localStorage.getItem("token");
     let navigate = useNavigate();
@@ -37,6 +41,10 @@ const Dashboard = () => {
     const displayedCountResult = useIncrementingCount(countResult);
     const displayedCountStructure = useIncrementingCount(countStructure);
     const displayedCountTopic = useIncrementingCount(countTopic);
+    const displayedCountLevel = useIncrementingCount(countLevel);
+    const displayedCountSkill = useIncrementingCount(countSkill);
+    const displayedCountPart = useIncrementingCount(countPart);
+    const displayedCountQuestion = useIncrementingCount(countQuestion);
 
     const fetchCountResult = async () => {
         try {
@@ -90,11 +98,67 @@ const Dashboard = () => {
             console.error("Error fetching count result:", error);
         }
     };
+    const fetchCountLevel = async () => {
+        try {
+            const response = await axios.get("http://localhost:8085/api/countLevel", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setCountLevel(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching count result:", error);
+        }
+    };
+    const fetchCountSkill = async () => {
+        try {
+            const response = await axios.get("http://localhost:8085/api/countSkill", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setCountSkill(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching count result:", error);
+        }
+    };
+    const fetchCountPart = async () => {
+        try {
+            const response = await axios.get("http://localhost:8085/api/countPart", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setCountPart(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching count result:", error);
+        }
+    };
+    const fetchCountQuestion = async () => {
+        try {
+            const response = await axios.get("http://localhost:8085/api/questions/countQuestion", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setCountQuestion(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching count result:", error);
+        }
+    };
     useEffect(() => {
         fetchCountTopic();
         fetchCountStructure();
         fetchCountUser();
         fetchCountResult();
+        fetchCountLevel();
+        fetchCountSkill();
+        fetchCountPart();
+        fetchCountQuestion();
     }, [token]);
 
     return (
@@ -142,6 +206,55 @@ const Dashboard = () => {
                         <div className="flex flex-col">
                             <span className="text-lg font-bold">{displayedCountTopic}</span>
                             <p className="text-lg">TOPIC</p>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <p>Đang tải dữ liệu...</p>
+            )}
+            {countResult !== null ? (
+                <div className="mt-20  flex justify-between w-full px-4 space-x-10">
+                    
+                    <div 
+                        onClick={() => navigate("/level")}
+                        className="flex items-center p-4 border rounded-lg bg-gray-100 w-1/4 cursor-pointer hover:bg-gray-200">
+                        <img src="../../src/filedata/study4_image/imageLevel.png" alt="User Icon"
+                            className="text-2xl text-blue-500 mr-4 h-20 w-20" />
+                        <div className="flex flex-col">
+                            <span className="text-4xl text-lg font-bold">{displayedCountLevel}</span>
+                            <p className="text-lg">LEVEL</p>
+                        </div>
+                    </div>
+                    <div
+                        onClick={() => navigate("/skill")}
+                        className="flex items-center p-4 border rounded-lg bg-gray-100 w-1/4 cursor-pointer hover:bg-gray-200">
+                        <img src="../../src/filedata/study4_image/imageSkill.png" alt="Result Icon"
+                            className="text-2xl text-blue-500 mr-4 h-20 w-20" />
+                        <div className="flex flex-col">
+                            <span className="text-lg font-bold">{displayedCountSkill}</span>
+                            <p className="text-lg">SKILL</p>
+                        </div>
+                    </div>
+
+                    <div 
+                        onClick={() => navigate("/part")}
+                        className="flex items-center p-4 border rounded-lg bg-gray-100 w-1/4 cursor-pointer hover:bg-gray-200">
+                        <img src="../../src/filedata/study4_image/imagePart.png" alt="Structure Icon"
+                            className="text-2xl text-blue-500 mr-4 h-20 w-20" />
+                        <div className="flex flex-col">
+                            <span className="text-lg font-bold">{displayedCountPart}</span>
+                            <p className="text-lg">PART</p>
+                        </div>
+                    </div>
+
+                    <div
+                        onClick={() => navigate("/question")}
+                        className="flex items-center p-4 border rounded-lg bg-gray-100 w-1/4 cursor-pointer hover:bg-gray-200">
+                        <img src="../../src/filedata/study4_image/imageQuestion.png" alt="Result Icon"
+                            className="text-2xl text-blue-500 mr-4 h-20 w-20" />
+                        <div className="flex flex-col">
+                            <span className="text-lg font-bold">{displayedCountQuestion}</span>
+                            <p className="text-lg">QUESTION</p>
                         </div>
                     </div>
                 </div>

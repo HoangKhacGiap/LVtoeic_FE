@@ -177,7 +177,7 @@ const QuestionForm = () => {
                         {topics.map((topic) => (
                             <option
                                 key={topic.id} value={topic.id}>
-                                {topic.imageName}
+                                {topic.name}
                             </option>
                         ))}
                     </select>

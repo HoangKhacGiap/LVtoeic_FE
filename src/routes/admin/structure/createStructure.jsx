@@ -37,7 +37,7 @@ const CreateStructure = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:8085/api/filterStructure`, {
+      const response = await axios.get(`http://localhost:8085/api/filterSructure`, {
         params: {
           pageNumber,
           pageSize,
@@ -65,14 +65,25 @@ const CreateStructure = () => {
     fetchData();
   }, [token, pageNumber, pageSize, keyword]);
 
-
+  const getPartById = (partId) => {
+    switch (partId.toString()) {
+      case '1': return "Part_5: Reading";
+      case '2': return "Part_1: Listening";
+      case '3': return "Part_2: Listening";
+      case '4': return "Part_3: Listening";
+      case '5': return "Part_4: Listening";
+      case '6': return "Part_6: Reading";
+      case '7': return "Part_7: Reading";
+      default: return "New Part";
+    };
+  };
   return (
     <div className="w-full h-full p-12">
       <h1 className="font-semibold my-12 text-center text-3xl">Structure Manage</h1>
-      <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
+      {/* <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4 flex items-center float-left">
         <PlusIcon className="h-5 w-5 mr-2" />
         Add
-      </button>
+      </button> */}
       <div className="mt-4 mb-2">
         <input className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
           type="search"
@@ -88,25 +99,25 @@ const CreateStructure = () => {
             <th className="border px-4 py-2">number_of_topic</th>
             <th className="border px-4 py-2">level_of_topic</th>
             <th className="border px-4 py-2">name</th>
-            <th className="border px-4 py-2">kind_of_structure_id</th>
-            <th className="border px-4 py-2">part_id</th>
-            <th className="border px-4 py-2">test</th>
-            <th className="border px-4 py-2">action</th>
+            {/* <th className="border px-4 py-2">kind_of_structure_id</th> */}
+            <th className="border px-4 py-2">Part</th>
+            {/* <th className="border px-4 py-2">test</th> */}
+            {/* <th className="border px-4 py-2">action</th> */}
           </tr>
         </thead>
         <tbody>
-          {skillList.map((skill) => (
+          {skillList.map((skill, index) => (
             <tr key={skill.id}>
               <td className="border px-4 py-2">{skill.id}</td>
               <td className="border px-4 py-2">{skill.number_of_topic}</td>
               <td className="border px-4 py-2">{skill.level_of_topic}</td>
               <td className="border px-4 py-2">{skill.name}</td>
-              <td className="border px-4 py-2">{skill.kind_of_structure_id}</td>
-              <td className="border px-4 py-2">{skill.part_id}</td>
-              <td className="border px-4 py-2">{skill.test}</td>
-              <td className="border px-4 py-2 flex justify-center">
+              {/* <td className="border px-4 py-2">{skill.kind_of_structure_id}</td> */}
+              <td className="border px-4 py-2">{getPartById(skill.part_id)}</td>
+              {/* <td className="border px-4 py-2">{skill.test}</td> */}
+              {/* <td className="border px-4 py-2 flex justify-center">
                 <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2">Delete</button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>

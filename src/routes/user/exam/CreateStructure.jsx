@@ -9,6 +9,7 @@ import FooterUser from "../FooterUser";
 
 
 const CreateStructure = () => {
+    let token = localStorage.getItem("token");
     let navigate = useNavigate();
 
     const getDataByData = (part_id) => {
@@ -143,6 +144,7 @@ const CreateStructure = () => {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
+                        Authorization: `Bearer ${token}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(formEntries),

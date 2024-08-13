@@ -268,7 +268,7 @@ const TestExam = () => {
                                             </div>
                                         )}
                                         <div className="flex-grow">
-                                            <p className="text-md mb-2">{topic.content}</p>
+                                            {/* <p className="text-md mb-2">{topic.content}</p> */}
                                             {topic.pathAudio && (
                                                 <audio controls className="mb-2">
                                                     <source src={`/src/filedata/study4_audio/part1_listening/${topic.pathAudio}.mp3`} type="audio/mp3" />

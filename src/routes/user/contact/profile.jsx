@@ -10,6 +10,8 @@ import HeaderUser from "../HeaderUser";
 import FooterUser from "../FooterUser";
 
 const Profile = () => {
+    const [incrementalId, setIncrementalId] = useState(1);
+
     const [check, setCheck] = useState(false);
 
     const [profile, setProfile] = useState([]);
@@ -221,9 +223,11 @@ const Profile = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {resultList.map((result) => (
+                    {resultList.map((result, index) => (
                         <tr key={result.id}>
-                            <td className="border px-4 py-2">{result.id}</td>
+                            {/* <td className="border px-4 py-2">{result.id}</td> */}
+                            <td className="border px-4 py-2">{incrementalId + index}</td>
+
                             <td className="border px-4 py-2">{result.totalMark}</td>
                             <td className="border px-4 py-2">{result.status}</td>
                             <td className="border px-4 py-2">{formatDate(result.createAt)}</td>

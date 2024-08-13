@@ -204,10 +204,10 @@ const CreateTopic = () => {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
               </div>
-              {questionData.answers.map((answer) => (
+              {questionData.answers.map((answer, index) => (
                 <div className="mb-4" key={answer.id}>
                   <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`answer-${answer.id}`}>
-                    Answer {answer.id}
+                    Answer {index + 1}
                   </label>
                   <input
                     id={`answer-${answer.id}`}
